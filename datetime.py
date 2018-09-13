@@ -16,8 +16,8 @@ def ts_now_timezone(ts="America/New_York"):
 
 
 def iso_utc_now():
-    return datetime.utcnow().isoformat()
+    return ts_now_utc().isoformat()
 
 
 def iso_utc_timezone(ts="America/New_York"):
-    return datetime.now(tz=LOCAL_TZ).astimezone(timezone(ts)).strftime('%Y-%m-%d %H:%M:%S')
+    return ts_now_timezone(ts).strftime('%Y-%m-%d %H:%M:%S')
