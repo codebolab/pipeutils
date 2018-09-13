@@ -27,7 +27,6 @@ def config(name='base'):
             os.path.join(CONFIG_PATH, 'default.conf'),
         ]
     elif name == 'aws':
-        print('into')
         paths = [
             os.path.join(HOME, '.pipeutils', 'config', 'aws.conf'),
             os.path.join(CONFIG_PATH, 'aws.conf'),
@@ -47,9 +46,9 @@ def config(name='base'):
         raise Exception("Config file default.conf couldn't be found")
 
     if six.PY3:
-        config = ConfigParser.SafeConfigParser()
-    else:
         config = ConfigParser.ConfigParser()
+    else:
+        config = ConfigParser.SafeConfigParser()
 
     config.read([path])
     configuration = dict(config.items(name))
