@@ -29,10 +29,7 @@ def config(name='base', dir_path=CONFIG_PATH):
     if os.path.exists(os.path.join(dir_path, _file)):
         path = os.path.join(dir_path, _file)
     else:
-        raise Error("Failed not open for {!r})".format(name), 'ConfigNotFound')
-
-    #if path is None:
-        #raise Error("Failed not open for {!r})".format(name), 'ConfigNotFound')
+        raise ConfigNotFound("Failed not open for {!r})".format(name), 'ConfigNotFound')
 
     if six.PY3:
         config = ConfigParser.ConfigParser()
@@ -45,18 +42,17 @@ def config(name='base', dir_path=CONFIG_PATH):
     return configuration
 
 
-class Error(Exception):
-   """Base class for other exceptions"""
-   def __init__(self, message, errors):
-       #if six.PY3:
-       #    super().__init__(message)
-       #else:
-       super(Error, self).__init__(message)
-       self.errors = errors
+class ConfigNotFound(ValueError):
 
-class ValueError(Error):
-   """Raised when the input value"""
-   pass
+    def __init__(self, arg):
+        self.strerror = arg
+        self.args = {arg}
+
+        try:
+            raise ConfigNotFound("Failed not open File not found.")
+        except ConfigNotFound as e:
+            print("ConfigNotFound Exception!", e.strerror)
+
 
 
 PIPE_PATH = os.path.os.path.dirname(__file__)
