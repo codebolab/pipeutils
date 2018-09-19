@@ -6,8 +6,8 @@ HOME = os.path.expanduser("~")
 CONFIG_PATH = os.environ.get('PIPE_CONFIG_PATH', os.path.join(HOME, '.pipeutils', 'config'))
 path = os.path.dirname(os.path.realpath(__file__))
 print("path: %s " % path)
-from pipeutils import config
-from pipeutils import logger
+from pipelineutils import config
+from pipelineutils import logger
 
 
 class TestConfigFile(unittest.TestCase):
