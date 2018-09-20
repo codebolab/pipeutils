@@ -1,0 +1,12 @@
+[
+    {
+        "name": "pepeline_name",
+        "schema": {
+            "1.0": "test.avsc",
+            "2.0": "test.avsc",
+            "3.0": "test.avsc",
+            "4.0": "test.avsc",
+            "5.0": "test.avsc"
+        }
+    }
+]
