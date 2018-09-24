@@ -11,10 +11,10 @@ install_requires = [
 ]
 
 setup(name='pipeutils',
-      version='0.1',
+      version='1.0',
       description='The pipeutils',
       url='https://github.com/codebolab/pipeutils.git',
-      author='Code.bo',
+      author='code.bo',
       author_email='info@code.bo',
       license='MIT',
       packages=find_packages(),
