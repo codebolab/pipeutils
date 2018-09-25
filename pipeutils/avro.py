@@ -1,7 +1,4 @@
 import os
-import json
-
-from collections import OrderedDict
 
 HOME = os.path.expanduser("~")
 VERSION = 1
@@ -13,43 +10,43 @@ class Registry:
     '''
         A schema registry should manage the avro schemas and versions.
     '''
-    def __init__(self, _path=None):
+    def __init__(self, path=None):
         self.schema = {}
-        if _path is not None:
-            self.path = _path
+        if path is not None:
+            self.path = path
         elif os.environ.get('PIPE_SCHEMA_REGISTRY'):
             self.path = os.environ.get('PIPE_SCHEMA_REGISTRY')
         else:
             self.path = os.path.join(HOME, '.pipeutils', 'registry')
 
-    def _cache_schema(self, entry, key):
+    def _cache(self, key, value):
         # overwrite, not much performance impact, as shouldn't be happening often
-        self.schema[key] = entry
-
-    def register(self, name):
-        for f in os.listdir(self.path):
-            if f.endswith('.json') and os.path.splitext(f)[0] == name:
-                with open(os.path.join(self.path, f), 'r') as _file:
-                    json_data = _file.read()
-                    data = json.loads(json_data)
-                    key_base = f.replace('.json', '')
-                for entry in data:
-                    key = "%s_%s" % (key_base, entry.get('name'))
-                    self._cache_schema(entry, key)
-        return self.schema
+        self.schema[key] = value
 
     def get(self, name=None, version=VERSION):
-        result = OrderedDict()
-        _schema = self.register(name)
-        if _schema:
-            for datum in _schema.values():
-                for v in datum['schema']:
-                    if float(v) == version:
-                        path = os.path.join(self.path, datum['schema'][v])
-                        with open(path) as f:
-                            result['schema'] = f.read()
-                            result['name'] = name
-                            result['version'] = version
+        _schema = os.path.join(self.path, name)
+        if os.path.exists(_schema):
+            for f in os.listdir(_schema):
+                if f.endswith('.avsc') and int(os.path.splitext(f)[0]) == version:
+                    with open(os.path.join(self.path, name, f)) as a:
+                        key = '%s_%s' % (name, str(version))
+                        self._cache(key, a.read())
+                else:
+                    raise SchemaVersionNotFound
         else:
-            raise ValueError('invalid schama not fount: %s' % name)
-        return result
+            raise SchemaNotFound
+        return self.schema
+
+
+class SchemaNotFound(Exception):
+    """
+    Exception when an schema couldn't be found
+    """
+    pass
+
+
+class SchemaVersionNotFound(Exception):
+    """
+    Exception when an schema version couldn't be found
+    """
+    pass
