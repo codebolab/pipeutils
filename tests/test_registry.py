@@ -4,7 +4,7 @@ import logging
 import six
 import json
 
-from pipeutils.avro import Registry, SchemaVersionNotFound
+from pipeutils.avro import Registry, SchemaVersionNotFound, SchemaNotFound
 from pipeutils import logger
 from avro import schema
 
@@ -55,13 +55,27 @@ class TestRegistry(unittest.TestCase):
 
         logger.setLevel(logging.DEBUG)
         logger.info("testing")
-        # not found version 2
         version = 3
         self.register = Registry(path_configs)
         _schema, found_scheme = self.register.get(name, version)
 
         logger.info(found_scheme)
         self.assertEquals(found_scheme, False)
+
+    def test_fail_schema_not_exist(self):
+        """
+           To test exception raise due to run time error
+        """
+
+        logger.setLevel(logging.DEBUG)
+        logger.info("testing")
+        version = 1
+        name = 'test_1'
+        self.register = Registry(path_configs)
+
+        self.register = Registry(path_configs)
+        self.assertRaises(SchemaNotFound, lambda: self.register.get(name, version))
+
 
 if __name__ == '__main__':
     unittest.main()
