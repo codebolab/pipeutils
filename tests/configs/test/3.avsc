@@ -1,0 +1,9 @@
+{
+ "type": "record",
+ "name": "test",
+ "fields": [
+     {"name": "name", "type": "string"},
+     {"name": "favorite_color", "type": "string"},
+     {"name": "favorite_number",  "type": "int"}
+ ]
+}
