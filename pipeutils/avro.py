@@ -2,8 +2,6 @@ import os
 import avro.schema
 
 HOME = os.path.expanduser("~")
-VERSION = 1
-
 
 
 class Registry:
@@ -26,10 +24,11 @@ class Registry:
         # overwrite, not much performance impact, as shouldn't be happening often
         self.schema[key] = value
 
-    def get(self, name=None, version=VERSION):
+    def get(self, name=None, version=None):
         _schema = os.path.join(self.path, name)
         if os.path.exists(_schema):
             for f in os.listdir(_schema):
+                # print('file %s' % f)
                 if f.endswith('.avsc') and int(os.path.splitext(f)[0]) == version:
                     self.found_schema = True
                     _file = os.path.join(self.path, name, f)
@@ -37,7 +36,8 @@ class Registry:
                     with open(os.path.join(self.path, name, f)) as a:
                         key = '%s_%s' % (name, str(version))
                         self._cache(key, a.read())
-                elif not self.found_schema and int(os.path.splitext(f)[0]) < version:
+                    break
+                elif not self.found_schema and int(os.path.splitext(f)[0]) > version:
                     print('Other Version >  %s ' % int(os.path.splitext(f)[0]))
                 else:
                     raise SchemaVersionNotFound
