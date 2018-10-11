@@ -26,8 +26,7 @@ class TestRegistry(unittest.TestCase):
         logger.info("testing")
 
         register = Registry(path_configs)
-        r_schema, found_scheme = register.get(name, version)
-        logger.info(found_scheme)
+        r_schema = register.get(name, version)
 
         if six.PY3:
             original_parse = schema.Parse(_schema)
@@ -40,27 +39,12 @@ class TestRegistry(unittest.TestCase):
         """
            To test exception raise due to run time error
         """
-
         logger.setLevel(logging.DEBUG)
         logger.info("testing")
         # not found version 2
         version = 1
         self.register = Registry(path_configs)
         self.assertRaises(SchemaVersionNotFound, lambda: self.register.get(name, version))
-
-    def test_fail_schema_version(self):
-        """
-           To test exception raise due to run time error
-        """
-
-        logger.setLevel(logging.DEBUG)
-        logger.info("testing")
-        version = 3
-        self.register = Registry(path_configs)
-        _schema, found_scheme = self.register.get(name, version)
-
-        logger.info(found_scheme)
-        self.assertEquals(found_scheme, False)
 
     def test_fail_schema_not_exist(self):
         """
@@ -71,10 +55,17 @@ class TestRegistry(unittest.TestCase):
         logger.info("testing")
         version = 1
         name = 'test_1'
-        self.register = Registry(path_configs)
 
         self.register = Registry(path_configs)
         self.assertRaises(SchemaNotFound, lambda: self.register.get(name, version))
+
+    def test_path_schemas(self):
+        """
+        """
+        logger.info("Schemas for test.>  %s" % path_configs)
+        if not os.path.exists(path_configs):
+            logger.info("Add Directory for schemas.")
+        assert os.path.exists(path_configs)
 
 
 if __name__ == '__main__':
