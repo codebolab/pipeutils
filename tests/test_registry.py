@@ -55,7 +55,6 @@ class TestRegistry(unittest.TestCase):
         logger.info("testing")
         version = 1
         name = 'test_1'
-
         self.register = Registry(path_configs)
         self.assertRaises(SchemaNotFound, lambda: self.register.get(name, version))
 
@@ -66,7 +65,6 @@ class TestRegistry(unittest.TestCase):
         if not os.path.exists(path_configs):
             logger.info("Add Directory for schemas.")
         assert os.path.exists(path_configs)
-
 
 if __name__ == '__main__':
     unittest.main()

@@ -8,15 +8,14 @@ install_requires = [
     'sphinx-rtd-theme>=0.4.1',
     'sphinxcontrib-websupport>=1.1.0',
     'tzlocal>=1.5.1',
-    'avro>=1.8.2',
     'avro-python3>=1.8.2'
 ]
 
 setup(name='pipeutils',
-      version='0.1',
+      version='1.0',
       description='The pipeutils',
       url='https://github.com/codebolab/pipeutils.git',
-      author='Code.bo',
+      author='code.bo',
       author_email='info@code.bo',
       license='MIT',
       packages=find_packages(),

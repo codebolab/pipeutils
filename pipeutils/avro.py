@@ -23,7 +23,7 @@ class Registry:
     def _cache(self, key, value):
         # overwrite, not much performance impact, as shouldn't be happening often
         self.cache_schemas[key] = value
-
+        
     def get(self, name=None, version=VERSION):
         _schema = os.path.join(self.path, name)
         if os.path.exists(_schema):
@@ -39,6 +39,7 @@ class Registry:
                     raise SchemaVersionNotFound
         else:
             raise SchemaNotFound
+
 
 class SchemaNotFound(Exception):
     """
