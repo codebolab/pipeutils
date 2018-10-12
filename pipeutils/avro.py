@@ -5,6 +5,19 @@ HOME = os.path.expanduser("~")
 VERSION = 1
 
 
+class SchemaNotFound(Exception):
+    """
+    Exception when an schema couldn't be found
+    """
+    pass
+
+
+class SchemaVersionNotFound(Exception):
+    """
+    Exception when an schema version couldn't be found
+    """
+    pass
+
 
 class Registry:
 
@@ -27,11 +40,13 @@ class Registry:
     def get(self, name=None, version=VERSION):
         _schema = os.path.join(self.path, name)
         if os.path.exists(_schema):
-            for f in os.listdir(_schema):
-                if f.endswith('.avsc') and int(os.path.splitext(f)[0]) == version:
-                    _file = os.path.join(self.path, name, f)
+            for dirpath, dirs, files in os.walk(_schema):    
+                avro_file = '%s.avsc' % version
+                print("Files %s" % sorted(files))
+                if avro_file in sorted(files):
+                    _file = os.path.join(self.path, name, avro_file)
                     return avro.schema.Parse(open(_file, "rb").read())
-                    with open(os.path.join(self.path, name, f)) as a:
+                    with open(os.path.join(self.path, name, avro_file)) as a:
                         key = '%s_%s' % (name, str(version))
                         self._cache(key, a.read())
                         break 
@@ -40,16 +55,4 @@ class Registry:
         else:
             raise SchemaNotFound
 
-
-class SchemaNotFound(Exception):
-    """
-    Exception when an schema couldn't be found
-    """
-    pass
-
-
-class SchemaVersionNotFound(Exception):
-    """
-    Exception when an schema version couldn't be found
-    """
-    pass
+registry = Registry()
