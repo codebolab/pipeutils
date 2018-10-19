@@ -28,28 +28,20 @@ class Testserialize(unittest.TestCase):
         logger.setLevel(logging.DEBUG)
         logger.info("testing")
 
-        serializer = AvroSerializer('test', version, 'codetest')
+        serializer = AvroSerializer('test', version)
         data = {"name": "TEXT INTO MESSAGE", "favorite_color": "111", "favorite_number": random.randint(0, 10)}
-        kwargs = {
-            'schema': 'test',
-            #'version': 3
-        }
-        serialize = serializer.serialize(data, version, pipeline=None, **kwargs)
+        serialize = serializer.serialize(data, name, version)
         self.assertIn(bytes("TEXT INTO MESSAGE", "utf-8"), serialize)
 
     def test_get_deserialize_avro(self):
         """
         """
-        serializer = AvroSerializer('test', version, 'codetest')
+        serializer = AvroSerializer('test', version)
 
         data = {"name": "test", "favorite_color": "Red", "favorite_number": 0}
-        kwargs = {
-            'schema': 'test',
-            #'version': 3
-        }
 
-        bytes_text = serializer.serialize(data, version, pipeline=None, **kwargs)
-        serialize = serializer.deserialize(bytes_text, version, pipeline=None, **kwargs)
+        bytes_text = serializer.serialize(data, name, version)
+        serialize = serializer.deserialize(bytes_text, name, version)
         self.assertEqual(serialize, data)
 
     def test_get_serialize_json(self):
@@ -58,8 +50,9 @@ class Testserialize(unittest.TestCase):
         logger.setLevel(logging.DEBUG)
         logger.info("testing")
 
-        serializer = JSONSerializer()
-        data = {"name": "TEXT INTO MESSAGE", "favorite_color": "111", "favorite_number": 2}
+        serializer = JSONSerializer('test', version)
+
+        data = {"name": "TEXT INTO MESSAGE", "favorite_color": "Black", "favorite_number": 2}
 
         schema_dict = {
               "type": "record",
@@ -80,19 +73,19 @@ class Testserialize(unittest.TestCase):
         logger.info("DATA %s" % serialize)
 
         args = {
-            'schema': 'test',
+            'schema_name': 'test',
             'version': 3,
         }
 
         # GET SCHEMA.
-        avro_schema = serializer.get_schema(args)
+        avro_schema = serializer.get_schema(**args)
 
         kwargs = {
             'schema': avro_schema
         }
 
         json_data = serializer.serialize(data, **kwargs)
-        _avro = '{"name":"TEXT INTO MESSAGE","favorite_color":"111","favorite_number":2}'
+        _avro = '{"name": "TEXT INTO MESSAGE", "favorite_color": "Black", "favorite_number": 2}'
         
         logger.info("DATA %s" % _avro)
 
@@ -104,24 +97,23 @@ class Testserialize(unittest.TestCase):
         logger.setLevel(logging.DEBUG)
         logger.info("testing")
 
-        serializer = JSONSerializer()
-        data = {"name":"TEXT INTO MESSAGE","favorite_color":"111","favorite_number":2}
+        serializer = JSONSerializer('test', version)
+        data = {'name':'TEXT INTO MESSAGE','favorite_color':'RED', 'favorite_number':2}
 
         args = {
-            'schema': 'test',
+            'schema_name': 'test',
             'version': 3,
         }
 
         # GET SCHEMA.
-        avro_schema = serializer.get_schema(args)
+        avro_schema = serializer.get_schema(**args)
 
         kwargs = {
             'schema': avro_schema
         }
-        data = serializer.serialize(data, **kwargs)
+        _data = serializer.serialize(data, **kwargs)
 
-        dump_data = serializer.deserialize(data, **kwargs)
-        logger.info('deserialize %s' % dump_data)
+        dump_data = serializer.deserialize(_data, **kwargs)
         self.assertEqual(dump_data, data)
 
 if __name__ == '__main__':
