@@ -45,11 +45,13 @@ class Registry:
                 print("Files %s" % sorted(files))
                 if avro_file in sorted(files):
                     _file = os.path.join(self.path, name, avro_file)
-                    return avro.schema.Parse(open(_file, "rb").read())
-                    with open(os.path.join(self.path, name, avro_file)) as a:
-                        key = '%s_%s' % (name, str(version))
-                        self._cache(key, a.read())
-                        break 
+                    key = '%s_%s' % (name, str(version))
+                    with open(_file, 'rb') as f:
+                        data = f.read()
+                        f.close()
+                    self._cache(key, avro.schema.Parse(data))
+                    return avro.schema.Parse(data)
+                    break 
                 else:
                     raise SchemaVersionNotFound
         else:
