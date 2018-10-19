@@ -12,6 +12,22 @@ path = os.path.dirname(os.path.realpath(__file__))
 path_configs = os.path.join(path, 'configs')
 
 _schema = json.dumps({"type": "record", "name": "X", "fields": [{"name": "y", "type": {"type": "record", "name": "Y", "fields": [{"name": "Z", "type": "X"}]}}]})
+
+_avro_test_1 =json.dumps({"type" : "record", "namespace" : "test", "name" : "Numero_1", "fields" : [{ "name" : "Name" , "type" : "string" }, { "name" : "Age" , "type" : "int" }]})
+
+_avro_test_2 =json.dumps({"type" : "record", "namespace" : "test", "name" : "Numero_2", "fields" : [{ "name" : "Ocupation" , "type" : "string" }, { "name" : "Direction" , "type" : "string" }]})
+
+
+_avro_test_3 =json.dumps({"type" : "record", "namespace" : "test", "name" : "Numero_3", "fields" : [{ "name" : "Email" , "type" : "string" }, { "name" : "Number" , "type" : "int" }]})
+
+
+_avro_test_4 =json.dumps({"type" : "record", "namespace" : "test", "name" : "Numero_4", "fields" : [{ "name" : "NickName" , "type" : "string" }]})
+
+
+_avro_test_5 =json.dumps({"type" : "record", "namespace" : "test", "name" : "Numero_5", "fields" : [{ "name" : "Other" , "type" : "string" }, { "name" : "X" , "type" : "int" }]})
+
+
+
 version = 2
 name = 'test'
 
@@ -81,14 +97,23 @@ class TestRegistry(unittest.TestCase):
         r_schema_5 = self.register.get(name, version=5)
 
         if six.PY3:
-            original_parse = schema.Parse(_schema)
+            _file_test_1 = schema.Parse(_avro_test_1)
+            _file_test_2 = schema.Parse(_avro_test_2)
+            _file_test_3 = schema.Parse(_avro_test_3)
+            _file_test_4 = schema.Parse(_avro_test_4)
+            _file_test_5 = schema.Parse(_avro_test_5)
         else:
-            original_parse = schema.parse(_schema)
+            _file_test_1 = schema.parse(_avro_test_1)
+            _file_test_2 = schema.parse(_avro_test_2)
+            _file_test_3 = schema.parse(_avro_test_3)
+            _file_test_4 = schema.parse(_avro_test_4)
+            _file_test_5 = schema.parse(_avro_test_5)
 
-        self.assertEqual(r_schema_1, original_parse)
-        self.assertEqual(r_schema_2, original_parse)
-        self.assertEqual(r_schema_3, original_parse)
-        self.assertEqual(r_schema_4, original_parse)
+        self.assertEqual(r_schema_1, _file_test_1)
+        self.assertEqual(r_schema_2, _file_test_2)
+        self.assertEqual(r_schema_3, _file_test_3)
+        self.assertEqual(r_schema_4, _file_test_4)
+        self.assertEqual(r_schema_5, _file_test_5)
 
         self.assertRaises(SchemaVersionNotFound, lambda: self.register.get(name, version=6))
      

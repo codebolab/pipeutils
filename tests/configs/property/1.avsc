@@ -1,1 +1,9 @@
-{"type": "record", "name": "X", "fields": [{"name": "y", "type": {"type": "record", "name": "Y", "fields": [{"name": "Z", "type": "X"}]}}]}
+{
+   "type" : "record",
+   "namespace" : "test",
+   "name" : "Numero_1",
+   "fields" : [
+      { "name" : "Name" , "type" : "string" },
+      { "name" : "Age" , "type" : "int" }
+   ]
+}

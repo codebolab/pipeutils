@@ -40,20 +40,20 @@ class Registry:
     def get(self, name=None, version=VERSION):
         _schema = os.path.join(self.path, name)
         if os.path.exists(_schema):
-            for dirpath, dirs, files in os.walk(_schema):    
-                avro_file = '%s.avsc' % version
-                print("Files %s" % sorted(files))
-                if avro_file in sorted(files):
-                    _file = os.path.join(self.path, name, avro_file)
-                    key = '%s_%s' % (name, str(version))
-                    with open(_file, 'rb') as f:
-                        data = f.read()
-                        f.close()
-                    self._cache(key, avro.schema.Parse(data))
-                    return avro.schema.Parse(data)
-                    break 
-                else:
-                    raise SchemaVersionNotFound
+            #dirpath, dirs,
+            files = os.walk(_schema)  
+            element = [f for d, p, f in files]
+            avro_file = '%s.avsc' % version
+            print("Files %s" % sorted(element[0]))
+            if avro_file in sorted(element[0]):
+                _file = os.path.join(self.path, name, avro_file)
+                key = '%s_%s' % (name, str(version))
+                with open(_file, 'rb') as f:
+                    data = f.read()
+                self._cache(key, avro.schema.Parse(data))
+                return avro.schema.Parse(data)
+            else:
+                raise SchemaVersionNotFound
         else:
             raise SchemaNotFound
 

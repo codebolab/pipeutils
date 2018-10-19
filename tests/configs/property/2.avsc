@@ -1,1 +1,10 @@
-{"type": "record", "name": "X", "fields": [{"name": "y", "type": {"type": "record", "name": "Y", "fields": [{"name": "Z", "type": "X"}]}}]}
+{
+   "type" : "record",
+   "namespace" : "test",
+   "name" : "Numero_2",
+   "fields" : [
+      { "name" : "Ocupation" , "type" : "string" },
+      { "name" : "Direction" , "type" : "string" }
+   ]
+}
+
