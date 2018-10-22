@@ -1,5 +1,6 @@
 import os
 import avro.schema
+from pipeutils import logger
 
 HOME = os.path.expanduser("~")
 VERSION = 1
@@ -48,10 +49,15 @@ class Registry:
             if avro_file in sorted(element[0]):
                 _file = os.path.join(self.path, name, avro_file)
                 key = '%s_%s' % (name, str(version))
-                with open(_file, 'rb') as f:
-                    data = f.read()
-                self._cache(key, avro.schema.Parse(data))
-                return avro.schema.Parse(data)
+                try:
+                    with open(_file, 'rb') as f:
+                        data = f.read()
+                    # logger.info(data)
+                    self._cache(key, avro.schema.Parse(data))
+                    return avro.schema.Parse(data)
+                except IOError as e:
+                    logger.warning("See exception below; skipping file %s", _file)
+                    logger.exception(e)
             else:
                 raise SchemaVersionNotFound
         else:
