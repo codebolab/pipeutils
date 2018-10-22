@@ -41,11 +41,10 @@ class Registry:
     def get(self, name=None, version=VERSION):
         _schema = os.path.join(self.path, name)
         if os.path.exists(_schema):
-            #dirpath, dirs,
             files = os.walk(_schema)  
             element = [f for d, p, f in files]
             avro_file = '%s.avsc' % version
-            print("Files %s" % sorted(element[0]))
+            logger.info("Files %s" % sorted(element[0]))
             if avro_file in sorted(element[0]):
                 _file = os.path.join(self.path, name, avro_file)
                 key = '%s_%s' % (name, str(version))
