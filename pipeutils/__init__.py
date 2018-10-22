@@ -51,7 +51,7 @@ class ConfigNotFound(ValueError):
         try:
             raise ConfigNotFound("Failed not open File not found.")
         except ConfigNotFound as e:
-            logger.debug('ConfigNotFound Exception! ', e.strerror)
+            logger.error('ConfigNotFound Exception! ', e.strerror)
 
 
 

@@ -28,7 +28,7 @@ class Testserialize(unittest.TestCase):
         logger.setLevel(logging.DEBUG)
         logger.info("testing")
 
-        serializer = AvroSerializer('test', version)
+        serializer = AvroSerializer()
         data = {"name": "TEXT INTO MESSAGE", "favorite_color": "111", "favorite_number": random.randint(0, 10)}
         serialize = serializer.serialize(data, name, version)
         self.assertIn(bytes("TEXT INTO MESSAGE", "utf-8"), serialize)
@@ -36,7 +36,7 @@ class Testserialize(unittest.TestCase):
     def test_get_deserialize_avro(self):
         """
         """
-        serializer = AvroSerializer('test', version)
+        serializer = AvroSerializer()
 
         data = {"name": "test", "favorite_color": "Red", "favorite_number": 0}
 
@@ -50,7 +50,8 @@ class Testserialize(unittest.TestCase):
         logger.setLevel(logging.DEBUG)
         logger.info("testing")
 
-        serializer = JSONSerializer('test', version)
+        avro_serialiser = AvroSerializer()
+        serializer = JSONSerializer()
 
         data = {"name": "TEXT INTO MESSAGE", "favorite_color": "Black", "favorite_number": 2}
 
@@ -78,7 +79,7 @@ class Testserialize(unittest.TestCase):
         }
 
         # GET SCHEMA.
-        avro_schema = serializer.get_schema(**args)
+        avro_schema = avro_serialiser.get_schema(**args)
 
         kwargs = {
             'schema': avro_schema
@@ -97,7 +98,9 @@ class Testserialize(unittest.TestCase):
         logger.setLevel(logging.DEBUG)
         logger.info("testing")
 
-        serializer = JSONSerializer('test', version)
+        serializer = JSONSerializer()
+        avro_serialiser = AvroSerializer()
+
         data = {'name':'TEXT INTO MESSAGE','favorite_color':'RED', 'favorite_number':2}
 
         args = {
@@ -106,7 +109,7 @@ class Testserialize(unittest.TestCase):
         }
 
         # GET SCHEMA.
-        avro_schema = serializer.get_schema(**args)
+        avro_schema = avro_serialiser.get_schema(**args)
 
         kwargs = {
             'schema': avro_schema
