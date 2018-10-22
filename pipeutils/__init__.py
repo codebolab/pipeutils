@@ -18,6 +18,7 @@ def config(name='base', dir_path=CONFIG_PATH):
     '''
     Args:
         name (str): The `name` is name of config file.
+        dir_path (str): The dir_path is environ or config file dir
     Returns:
         (dict) a configuration read from a file found in CONFIG_PATH
     '''
