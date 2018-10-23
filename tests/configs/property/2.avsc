@@ -1,0 +1,10 @@
+{
+   "type" : "record",
+   "namespace" : "test",
+   "name" : "Numero_2",
+   "fields" : [
+      { "name" : "Ocupation" , "type" : "string" },
+      { "name" : "Direction" , "type" : "string" }
+   ]
+}
+

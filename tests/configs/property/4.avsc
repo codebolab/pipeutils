@@ -1,0 +1,9 @@
+{
+   "type" : "record",
+   "namespace" : "test",
+   "name" : "Numero_4",
+   "fields" : [
+      { "name" : "NickName" , "type" : "string" }
+   ]
+}
+

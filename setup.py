@@ -8,7 +8,6 @@ install_requires = [
     'sphinx-rtd-theme>=0.4.1',
     'sphinxcontrib-websupport>=1.1.0',
     'tzlocal>=1.5.1',
-    'avro>=1.8.2',
     'avro-python3>=1.8.2'
 ]
 

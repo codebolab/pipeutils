@@ -1,0 +1,10 @@
+{
+   "type" : "record",
+   "namespace" : "test",
+   "name" : "Numero_3",
+   "fields" : [
+      { "name" : "Email" , "type" : "string" },
+      { "name" : "Number" , "type" : "int" }
+   ]
+}
+
