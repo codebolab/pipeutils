@@ -47,11 +47,10 @@ class Registry:
             return self.cache_schemas[key]
 
         if os.path.exists(_schema):
-            files = os.walk(_schema)  
-            element = [f for d, p, f in files]
+            element = os.listdir(_schema)  
             avro_file = '%s.avsc' % version
-            logger.info("Files - > %s" % sorted(element[0]))
-            if avro_file in sorted(element[0]):
+            logger.info("Files - > %s" % sorted(element))
+            if avro_file in sorted(element):
                 _file = os.path.join(self.path, name, avro_file)
                
                 try:
