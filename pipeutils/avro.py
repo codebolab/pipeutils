@@ -39,15 +39,21 @@ class Registry:
         self.cache_schemas[key] = value
         
     def get(self, name=None, version=VERSION):
+        key = '%s_%s' % (name, str(version))
         _schema = os.path.join(self.path, name)
+
+        if key in self.cache_schemas:
+            logger.debug('key : %s ', key)
+            return self.cache_schemas[key]
+
         if os.path.exists(_schema):
             files = os.walk(_schema)  
             element = [f for d, p, f in files]
             avro_file = '%s.avsc' % version
-            logger.info("Files %s" % sorted(element[0]))
+            logger.info("Files - > %s" % sorted(element[0]))
             if avro_file in sorted(element[0]):
                 _file = os.path.join(self.path, name, avro_file)
-                key = '%s_%s' % (name, str(version))
+               
                 try:
                     with open(_file, 'rb') as f:
                         data = f.read()
