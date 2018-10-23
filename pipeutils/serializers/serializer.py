@@ -19,15 +19,12 @@ class Serializer(object):
 
 class AvroSerializer(Serializer):
 
-    def get_schema(self, schema_name, version=1):
-        return registry.get(self._schema_name, self._version)
-
     def serialize(self, data, pipeline=None, version=1, **kwargs):
         """
         Returns the avro encoded version of `data` using the avro schema `pipeline` and its `version`.
         """
         raw_bytes = None
-        schema =  self.get_schema(schema_name=pipeline, version=version)
+        schema = registry.get(name=pipeline, version=version)
         try:
             writer = avro.io.DatumWriter(schema)
             bytes_writer = io.BytesIO()
@@ -47,7 +44,7 @@ class AvroSerializer(Serializer):
         """
         bytes_reader = io.BytesIO(data)
         decoder = avro.io.BinaryDecoder(bytes_reader)
-        schema =  self.get_schema(schema_name=pipeline, version=version)
+        schema = registry.get(name=pipeline, version=version)
         reader = avro.io.DatumReader(schema)
         datum = reader.read(decoder)
         logger.debug('Data : %s ', datum)
