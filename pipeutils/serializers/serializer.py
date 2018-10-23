@@ -10,23 +10,17 @@ from pipeutils.avro import Registry, registry
 
 
 class Serializer(object):
-    pass
+    def serialize(self, data, **kwargs):
+        raise NotImplementedError
+
+    def deserialize(self, data, **kwargs):
+        raise NotImplementedError
 
 
 class AvroSerializer(Serializer):
 
     def get_schema(self, schema_name, version=1):
-        if schema_name:
-            self._schema_name = schema_name
-        if version:
-            self._version = version
-
-        key = '%s_%s' % (self._schema_name, self._version)
-        if key in registry.cache_schemas:
-            logger.debug('key : %s ', key)
-            return registry.cache_schemas[key]
-        else:
-            return registry.get(self._schema_name, self._version)
+        return registry.get(self._schema_name, self._version)
 
     def serialize(self, data, pipeline=None, version=1, **kwargs):
         """
