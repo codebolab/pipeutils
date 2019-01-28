@@ -5,10 +5,7 @@ import botocore
 from pipeutils import logger
 from pipeutils import config
 
-HOME = os.path.expanduser("~")
-CONFIG_PATH = os.environ.get('PIPE_CONFIG_CLIENTS', os.path.join(HOME, '.pipeutils'))
-
-s3 = config('s3', CONFIG_PATH)
+s3 = config('s3')
 
 
 class ClientS3(object):
