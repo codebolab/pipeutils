@@ -23,3 +23,7 @@ RUN /bin/bash $HOME/miniconda.sh -b -p $HOME/miniconda
 WORKDIR /app
 
 RUN /bin/bash -c "source init.sh "
+
+RUN source /root/miniconda/bin/activate
+
+RUN python setup.py develop
