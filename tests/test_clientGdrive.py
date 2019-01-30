@@ -1,18 +1,13 @@
 import unittest
 import os
-import logging
-import json
-import gdrive_client
 
-from pipeutils import config
-from pipeutils.clients_GDrive import GDrive as DriveClient
+from pipeutils.clients.client_GDrive import GDrive #as DriveClient
 from pipeutils import logger
-PATH = os.path.dirname(os.path.realpath(__file__))
 
 
 class TestCientGdrive(unittest.TestCase):
     def get_client(self):
-        client = DriveClient.GDrive()
+        client = GDrive()
         return client
 
     def test_get_list(self):
@@ -34,7 +29,8 @@ class TestCientGdrive(unittest.TestCase):
         file_upload = os.path.join(cwd_dir, "file1.txt")
         upload = client.upload(file_upload, 'test')
         assert upload is not None
-  
+
+
 if __name__ == '__main__':
     unittest.main()
 

@@ -34,7 +34,8 @@ class GDrive(object):
         self.service = self.initialize_service() 
 
     def get_credentials(self):
-        credential_path = os.path.join(GDRIVE['config_path'], GDRIVE['secret_file'])
+        credential_path = os.path.join(GDRIVE['secret_file'])
+        logger.info('credential_path %s' % credential_path)
         store = file.Storage(credential_path)
         creds = store.get()
         if not creds or creds.refresh(creds.authorize(Http())):
