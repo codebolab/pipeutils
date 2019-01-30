@@ -14,13 +14,6 @@ class TestCientGdrive(unittest.TestCase):
     def get_client(self):
         client = DriveClient.GDrive()
         return client
-    '''
-    def test_exis_file(self):
-        client = self.get_client()
-        #result = client.search("name contains 'file_test_uload.txt' and mimeType != 'application/vnd.google-apps.folder'", sort='modifiedTime desc')
-        result = client.exists('file_test_upload.txt')
-        logger.info('result %s' % result)
-    ''' 
 
     def test_get_list(self):
         client = self.get_client()

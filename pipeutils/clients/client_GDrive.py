@@ -24,10 +24,8 @@ except ImportError:
     logger.info('pip install --upgrade oauth2client')
     sys.exit(1)
 
-SCOPES = 'https://www.googleapis.com/auth/drive'
-CLIENT_SECRET_FILE = 'gdrive.conf'
-CONFIG_PATH = os.environ.get('PIPE_CONFIG_CLIENTS', os.path.join(HOME, '.pipeutils'))
-
+from pipeutils import config
+GDRIVE = config('gdrive')
 
 class GDrive(object):
 
@@ -36,11 +34,11 @@ class GDrive(object):
         self.service = self.initialize_service() 
 
     def get_credentials(self):
-        credential_path = os.path.join(CONFIG_PATH, CLIENT_SECRET_FILE)
+        credential_path = os.path.join(GDRIVE['config_path'], GDRIVE['secret_file'])
         store = file.Storage(credential_path)
         creds = store.get()
         if not creds or creds.refresh(creds.authorize(Http())):
-            flow = client.flow_from_clientsecrets(CLIENT_SECRET_FILE, SCOPES)
+            flow = client.flow_from_clientsecrets(GDRIVE['secret_file'], GDRIVE['scopes'])
             if args:
                 creds = tools.run_flow(flow, store, args)
             else:
