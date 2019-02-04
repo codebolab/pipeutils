@@ -41,6 +41,8 @@ class Database(object):
         return self.connection
 
     def close(self):
+        """
+        """
         if self.connection.opened():
             logger.info(' connection closed.')
             self.connection.close()
@@ -52,13 +54,9 @@ class Database(object):
 
 class Vertica(Database):
 
-    def __init__(self):
-        pass
-
-    def insert(self, schema, table, rows):
-        pass
-
     def insert_from_csv(self, schema, table, path):
+        """
+        """
         connect = self.connect()
 
         if connect is not None:
@@ -73,7 +71,9 @@ class Vertica(Database):
                 cursor.copy(query, _file)
                 connect.commit()
 
-    def insert_from_dataframe(self, schema, table, dataframe):
+    def insert_from_dataframe(self, schema, table, dataframe):   
+        """
+        """
         connect = self.connect()
         if connect is not None:
             cursor = connect.cursor()
@@ -89,14 +89,5 @@ class Vertica(Database):
             cursor.copy(query, csv_buf.getvalue())
             connect.commit()
 
-
     def insert_from_s3(self, schema, table, s3path, filter='*.csv'):
-        pass
-    def update(self, schema, table, rows):
-        pass
-    def update_from_csv(self, schema, table, path):
-        pass
-    def update_from_dataframe(self, schema, table, dataframe):
-        pass
-    def update_from_s3(self, schema, table, s3path, filter='*.csv'):
         pass
