@@ -27,6 +27,7 @@ def config(name='base', dir_path=CONFIG_PATH):
 
     # check file exists
     _file = os.path.join(dir_path, '%s.conf' % name)
+    logger.info('Config File: %s' % _file)
     if os.path.exists(os.path.join(dir_path, _file)):
         path = os.path.join(dir_path, _file)
     else:
