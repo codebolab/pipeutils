@@ -4,13 +4,17 @@ from vertica_python import connect
 from pipeutils import config
 from pipeutils import logger
 
-ASCII = 'ascii'
 try:
     VERTICA = config('vertica')
 except Exception as e:
     logger.info('error config file.')
 
+
 class Database(object):
+    pass
+
+
+class Vertica(Database):
 
     def __init__(self, options=None):
         self.connection = None
@@ -28,6 +32,7 @@ class Database(object):
         Return:
             connection
         """
+
         if self.connection is None:
             try:
                 self.connection = connect(**self.options)
@@ -38,7 +43,8 @@ class Database(object):
         if self.connection is not None and self.connection.opened():
             return self.connection
 
-        return self.connection
+        if not self.connection.opened():
+            return self.reconect()
 
     def close(self):
         """
@@ -49,15 +55,15 @@ class Database(object):
             self.connection.close()
 
     def reconect(self):
+        """
+        This causes a connection reset after for every call to execute
+        """
         self.connection.reset_connection()
         return self.connection
 
-
-class Vertica(Database):
-
     def insert_from_csv(self, schema, table, path):
         """
-        Insert rows from a csv into of database vertica.
+        Insert rows from a csv into the database.
         Required:
             schema: (str) vertica schema name
             table: (str) vertica table name

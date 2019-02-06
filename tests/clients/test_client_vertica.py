@@ -15,7 +15,7 @@ class TestClientVertica(unittest.TestCase):
         """
         Check that attempting to open a existent connection
         """
-        client = Database()
+        client = Vertica()
         conn = client.connect()
         client.close()
         """
@@ -27,13 +27,13 @@ class TestClientVertica(unittest.TestCase):
         cursor.execute("select name from test.example")
         result = cursor.fetchall()
         logging.info(result)
-        self.assertIsNone(result)
+        self.assertIsNotNone(result)
 
     def test_load_csv(self):
         """
           Verify that you try to load the database from csv files.
         """
-        client = Database()
+        client = Vertica()
         data_path = os.path.join(path, 'data')
 
         conn = client.connect()
@@ -56,7 +56,7 @@ class TestClientVertica(unittest.TestCase):
         """
           Verify that you try to load the database from dataframe.
         """
-        client = Database()
+        client = Vertica()
 
         conn = client.connect()
         cursor = conn.cursor()
