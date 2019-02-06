@@ -35,13 +35,21 @@ def create(url, params={}, prefix='', sufix='', output=None):
     return response.content
 
 
-def read(file):
+def read(file, compress=None):
     """Gets the content of a page saved as html.gz, for procces the content and returns ```document```.
     Args:
         file (str): The file parameter for process.
     Returns:
         The return content of a page.
     """
-    with gzip.open(file, 'rb') as f:
-        doc = pq(f.read())
-    return doc
+
+    if compress is None:
+        print('into')
+        with open(_file, 'rb') as f:
+            doc = pq(f.read())
+        return doc
+
+    if 'gzip' in compress:
+        with gzip.open(file, 'rb') as f:
+            doc = pq(f.read())
+        return doc

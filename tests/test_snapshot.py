@@ -39,7 +39,7 @@ class TesSnapShot(unittest.TestCase):
         """
         logger.info("Read")
         try:
-            _file = read(file_path)
+            _file = read(file_path, compress='gzip')
             self.assertIsNotNone(_file)
             passed = True
         except Exception as e:
