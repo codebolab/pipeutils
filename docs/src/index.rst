@@ -10,6 +10,8 @@ Welcome to pipeutils's documentation!
    :maxdepth: 2
    :caption: Contents:
 
+   gdrive/index
+
 
 
 Indices and tables
