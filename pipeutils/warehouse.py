@@ -32,19 +32,21 @@ class Vertica(Database):
         Return:
             connection
         """
+        if self.connection is not None:
+            logger.info(" connection: %s " % (self.connection is not None))
+            if not self.connection.opened():
+                logger.info("connection is closed")
+                return self.reconect()
 
-        if self.connection is None:
-            try:
-                self.connection = connect(**self.options)
-            except Exception as e:
-                logger.critical("Unable to connect to DB: {0}".format(e.message))
-                raise
+            if self.connection.opened():
+                return self.connection
+        try:
+            self.connection = connect(**self.options)
+        except Exception as e:
+            logger.critical("Unable to connect to DB: {0}".format(e.message))
+            raise
 
-        if self.connection is not None and self.connection.opened():
-            return self.connection
-
-        if not self.connection.opened():
-            return self.reconect()
+        return self.connection
 
     def close(self):
         """
