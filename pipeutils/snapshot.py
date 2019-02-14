@@ -36,22 +36,20 @@ def create(url, params={}, prefix='', sufix='', output=None):
     return response.content
 
 
-def read(file, compress=None):
+def read(file, compress=False):
     """Gets the content of a page saved as html.gz, for procces the content and returns ```document```.
     Args:
-        file (str): The file parameter for process.
-        compress (str):  The compress parameter to open the resulted file html.gz
+        file (str): The file path parameter is the path of the file to be read.
+        compress (bool): The parameter that determines compressed or not.
     Returns:
         The return content of a page.
     """
-
-    if compress is None:
-        print('into')
-        with open(_file, 'rb') as f:
-            doc = pq(f.read())
-        return doc
-
     if compress:
         with gzip.open(file, 'rb') as f:
+            doc = pq(f.read())
+        return doc
+    else: 
+        logger.info(' > file: %s ', file)
+        with open(file, 'rb') as f:
             doc = pq(f.read())
         return doc

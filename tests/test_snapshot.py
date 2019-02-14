@@ -40,6 +40,7 @@ class TesSnapShot(unittest.TestCase):
         logger.info("Read")
         try:
             _file = read(file_path, compress=True)
+            print(_file)
             self.assertIsNotNone(_file)
             passed = True
         except Exception as e:
