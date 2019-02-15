@@ -6,7 +6,7 @@ from datetime import date
 from pyquery import PyQuery as pq
 from pipeutils import logger
 
-def create(url, params={}, prefix='', sufix='', output=None):
+def create(url, params={}, headers={}, prefix='', sufix='', output=None):
 
     """Gets the content of a page, store a html.gz and returns a document to process.
     Args:
@@ -21,7 +21,7 @@ def create(url, params={}, prefix='', sufix='', output=None):
 
     logger.debug(' > URL: %s ', url)
     try:
-        response = requests.get(url, params=params)
+        response = requests.get(url, params=params, headers=headers)
     except:
         logger.debug("Connection refused by the server..")
         logger.debug("Was a nice sleep, now let me continue...")
