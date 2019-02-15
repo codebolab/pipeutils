@@ -6,7 +6,6 @@ from pipeutils import config
 from pipeutils import logger
 from pipeutils.clients.client_s3 import ClientS3
 
-
 try:
     VERTICA = config('vertica')
     S3 = config('s3')
@@ -112,7 +111,6 @@ class Vertica(Database):
             cursor.copy(query, csv_buf.getvalue())
             connect.commit()
 
-
     def insert_from_s3(self, schema, table, path):   
         """
         Insert rows from a dataframe into of database vertica.
@@ -132,4 +130,3 @@ class Vertica(Database):
             except Exception as e:
                 logger.debug("No found: {0}".format(e.message))
                 raise
-
