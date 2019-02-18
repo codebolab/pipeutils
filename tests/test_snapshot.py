@@ -12,11 +12,10 @@ from pipeutils.snapshot import create, read
 
 script_path = os.path.dirname(os.path.abspath( __file__ ))
 data_path = os.path.join(script_path, 'data')
-file_path = os.path.join(data_path, 'file.html.gz')
+file_path = os.path.join(data_path, 'file.html.zip')
 
 
 class TesSnapShot(unittest.TestCase):
-    '''
     def test_create(self):
         """
          Execute the ```create``` function and verify if the file was created.
@@ -39,14 +38,13 @@ class TesSnapShot(unittest.TestCase):
         """
         logger.info("Read")
         try:
-            _file = read(file_path, compress=True)
-            print(_file)
+            print(file_path)
+            _file = read(file_path)
             self.assertIsNotNone(_file)
             passed = True
         except Exception as e:
             passed = 'No such file' in str(e)
         self.assertEqual(passed, True)
-    '''
 
     def test_header(self):
         """
@@ -61,7 +59,6 @@ class TesSnapShot(unittest.TestCase):
         response = requests.get(url, headers=headers)
         content = response.content
         self.assertEqual(_file[1], content[1])
-
 
 if __name__ == '__main__':
     unittest.main()

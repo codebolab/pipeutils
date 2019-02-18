@@ -1,6 +1,7 @@
 import os
 import requests
 import gzip
+import pathlib
 
 from datetime import date
 from pyquery import PyQuery as pq
@@ -36,20 +37,17 @@ def create(url, params={}, headers={}, prefix='', sufix='', output=None):
     return response.content
 
 
-def read(file, compress=False):
+def read(filepath):
     """Gets the content of a page saved as html.gz, for procces the content and returns ```document```.
     Args:
-        file (str): The file path parameter is the path of the file to be read.
-        compress (bool): The parameter that determines compressed or not.
+        filepath (str): The file path parameter is the path of the file to be read.
     Returns:
         The return content of a page.
     """
-    if compress:
-        with gzip.open(file, 'rb') as f:
+    if '.gz' or '.zip' in pathlib.Path(filepath).suffixes:
+        with gzip.open(filepath, 'rb') as f:
             doc = pq(f.read())
         return doc
-    else: 
-        logger.info(' > file: %s ', file)
-        with open(file, 'rb') as f:
-            doc = pq(f.read())
-        return doc
+    with open(filepath, 'rb') as f:
+        doc = pq(f.read())
+    return doc
