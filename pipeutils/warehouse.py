@@ -1,6 +1,7 @@
 import io
 import os
 import csv
+import tempfile
 from vertica_python import connect
 from pipeutils import config
 from pipeutils import logger
@@ -124,12 +125,11 @@ class Vertica(Database):
         connect = self.connect()
         if connect is not None:
             client_s3 = ClientS3(S3['bucket'])
-            path_down = "/tmp/{0}".format(path)
-            client_s3.download(path, path_down)
+            temp = tempfile.NamedTemporaryFile()
+            temp.close()
+            client_s3.download(path, temp.name)
             try:
-                self.insert_from_csv(schema, table, path_down)
-                os.remove(path_down)
+                self.insert_from_csv(schema, table, temp.name)
             except Exception as e:
-                logger.debug("No found: {0}".format(e.message))
+                logger.error("No found: {0}".format(e.message))
                 raise
-

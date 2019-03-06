@@ -10,7 +10,7 @@ path = os.path.dirname(os.path.realpath(__file__))
 
 
 class TestClientVertica(unittest.TestCase):
-    '''
+
     def test_connect(self):
         """
         Check that attempting to open a existent connection
@@ -74,13 +74,12 @@ class TestClientVertica(unittest.TestCase):
         cursor.execute("select count(name) from test.fb_user_bio;")
         result_2 = cursor.fetchall()
         self.assertEqual(sum(result[0]), sum(result_2[0])-1)
-        '''
 
     def test_load_fromS3(self):
         """
           Check insert from s3
         """
-        
+        client = Vertica()
         conn = client.connect()
         cursor = conn.cursor()
         cursor.execute("select count(name) from test.fb_user_bio;")
