@@ -94,6 +94,5 @@ class TestClientVertica(unittest.TestCase):
         self.assertNotEqual(result[0], result_2[0])
 
 
-
 if __name__ == '__main__':
     unittest.main()

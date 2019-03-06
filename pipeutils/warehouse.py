@@ -1,5 +1,4 @@
 import io
-import os
 import csv
 import tempfile
 from vertica_python import connect
@@ -113,7 +112,6 @@ class Vertica(Database):
             cursor.copy(query, csv_buf.getvalue())
             connect.commit()
 
-
     def insert_from_s3(self, schema, table, path):   
         """
         Insert rows from a dataframe into of database vertica.
@@ -128,6 +126,7 @@ class Vertica(Database):
             temp = tempfile.NamedTemporaryFile()
             temp.close()
             client_s3.download(path, temp.name)
+
             try:
                 self.insert_from_csv(schema, table, temp.name)
             except Exception as e:
