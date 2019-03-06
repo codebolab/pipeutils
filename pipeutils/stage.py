@@ -25,4 +25,4 @@ def local(df, output=None, prefix='', sufix=''):
     today = date.today().strftime('_%Y_%m_%d_')
     path = os.path.join(output, prefix + today + str(sufix) + '.csv')
     df.to_csv(path, encoding='utf-8', index=False, sep=';')
-    logger.info("The CSV file %s was saved" % (path,))
+    logger.info("The CSV file %s was saved" % path)
