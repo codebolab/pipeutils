@@ -6,7 +6,6 @@ from pipeutils import config
 from pipeutils import logger
 from pipeutils.clients.client_s3 import ClientS3
 
-
 try:
     VERTICA = config('vertica')
     S3 = config('s3')
@@ -131,4 +130,3 @@ class Vertica(Database):
                 self.insert_from_csv(schema, table, temp.name)
             except Exception as e:
                 logger.error("No found: {0}".format(e.message))
-                raise

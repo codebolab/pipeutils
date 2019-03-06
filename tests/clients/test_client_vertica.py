@@ -3,14 +3,13 @@ import os
 import logging
 import pandas as pd
 import fnmatch
-from pipeutils.warehouse import Database, Vertica
+from pipeutils.warehouse import Vertica
 from os.path import isfile, join
 
 path = os.path.dirname(os.path.realpath(__file__))
 
 
 class TestClientVertica(unittest.TestCase):
-
     def test_connect(self):
         """
         Check that attempting to open a existent connection
@@ -92,7 +91,6 @@ class TestClientVertica(unittest.TestCase):
         cursor.execute("select count(name) from test.fb_user_bio;")
         result_2 = cursor.fetchall()
         self.assertNotEqual(result[0], result_2[0])
-
 
 if __name__ == '__main__':
     unittest.main()
