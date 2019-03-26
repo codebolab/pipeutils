@@ -10,4 +10,4 @@ def generate_id(*args):
     concated = ''.join([six.text_type(x) for x in args])
     m = hashlib.md5()
     m.update(concated.encode('utf-8'))
-    return str(m.hexdigest())
+    return six.text_type(m.hexdigest())
