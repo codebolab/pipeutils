@@ -63,7 +63,7 @@ class Vertica(Database):
         self.connection.reset_connection()
         return self.connection
 
-    def insert_from_csv(self, schema, table, path):
+    def insert_from_csv(self, schema, table, path, delimiter=','):
         """
         Insert rows from a csv into the database.
         Required:
@@ -81,7 +81,7 @@ class Vertica(Database):
                 query = "COPY {0}.{1} " \
                         "FROM STDIN " \
                         "PARSER FDELIMITEDPARSER " \
-                        "(delimiter=',')".format(schema, table)
+                        "(delimiter='{2}')".format(schema, table, delimiter)
                 cursor.copy(query, _file)
                 connect.commit()
 
