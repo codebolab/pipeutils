@@ -18,7 +18,8 @@ def generate_uuid(phrase, size=None):
     is a string and a size that receive a integer, the function return  a 
     string with the uuid code generated.
     """
+    res = str(uuid.uuid3(uuid.NAMESPACE_DNS, phrase))
     if size is None:
-        return str(uuid.uuid3(uuid.NAMESPACE_DNS, phrase))
+        return res
     else:
-        return str(uuid.uuid3(uuid.NAMESPACE_DNS, phrase))[:size]
+        return res[:size]
