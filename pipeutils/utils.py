@@ -2,7 +2,6 @@ import hashlib
 import six
 import uuid
 
-
 def generate_id(*args):
     """
     Generate a code based in md5, receive a tuple of strings and return a 
@@ -12,7 +11,6 @@ def generate_id(*args):
     m = hashlib.md5()
     m.update(concated.encode('utf-8'))
     return six.text_type(m.hexdigest())
-
 
 def generate_uuid(phrase, size=8):
     """
