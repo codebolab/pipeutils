@@ -28,6 +28,8 @@ def create(url, params={}, headers={}, prefix='', sufix='', output=None):
         logger.debug("Was a nice sleep, now let me continue...")
 
     if output is not None:
+        if not os.path.exists(output):
+            os.makedirs(output)
         today = date.today().strftime('%Y-%m-%d')
         path = os.path.join(output, prefix + today + str(sufix) + '.html.gz')
         with gzip.open(path, 'wb') as f:
