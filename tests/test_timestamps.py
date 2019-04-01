@@ -7,7 +7,7 @@ from tzlocal import get_localzone
 from pytz import timezone
 from pipeutils import logger
 from pipeutils.timestamps import ts_now_utc, iso_utc_now, ts_now_timezone 
-from pipeutils.timestamps import iso_utc_timezone
+from pipeutils.timestamps import iso_utc_timezone, today, iso_today, str_today
 
 
 class TestTimeStamps(unittest.TestCase):
@@ -52,6 +52,41 @@ class TestTimeStamps(unittest.TestCase):
         ts="America/New_York"
         time = datetime.now(tz=get_localzone()).astimezone(timezone(ts))
         self.assertEqual(dt, time.strftime('%Y-%m-%d %H:%M:%S'))
+
+
+    def test_get_today(self):
+        """
+        Today with time zone in America/New_York
+        """
+
+        dt = today(ts="America/New_York")
+        logger.info('today() %s ' % dt)
+
+        ts ="America/New_York"
+        time = datetime.now(tz=timezone(ts)).today()
+
+        self.assertEqual(dt.strftime("%d/%m/%y %H:%M"), time.strftime("%d/%m/%y %H:%M"))
+
+    def test_get_iso_today(self):
+        """
+        check today and returned in iso format.
+        """
+        ts = "America/New_York"
+        dt = iso_today(ts=ts)
+        logger.info('iso_today %s ' % dt)
+        time = datetime.now(tz=timezone(ts)).today().isoformat(' ')
+        logger.info('iso_today_time %s ' % time)
+        self.assertEqual(dt, time)
+
+    def test_get_srt_today(self):
+        """
+        Returns a date string formatted a '%Y-%m-%d' for today
+        """
+        ts = "America/New_York"
+        dt = str_today(ts=ts)
+        time = datetime.now(tz=timezone(ts)).today().strftime('%Y-%m-%d')
+        self.assertEqual(dt, time)
+
 
 if __name__ == '__main__':
     unittest.main()
