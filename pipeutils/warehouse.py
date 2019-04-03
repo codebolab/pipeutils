@@ -6,11 +6,8 @@ from pipeutils import config
 from pipeutils import logger
 from pipeutils.clients.client_s3 import ClientS3
 
-try:
-    VERTICA = config('vertica')
-    S3 = config('s3')
-except Exception as e:
-    logger.info('error config file.')
+VERTICA = config('vertica')
+S3 = config('s3')
 
 
 class Database(object):
@@ -119,14 +116,12 @@ class Vertica(Database):
             table: (str) vertica table name
             th: (str) Path file in s3
         """
-        connect = self.connect()
-        if connect is not None:
-            client_s3 = ClientS3(S3['bucket'])
-            temp = tempfile.NamedTemporaryFile()
-            temp.close()
-            client_s3.download(path, temp.name)
+        client_s3 = ClientS3(S3['bucket'])
+        temp = tempfile.NamedTemporaryFile()
+        temp.close()
+        client_s3.download(path, temp.name)
 
-            try:
-                self.insert_from_csv(schema, table, temp.name)
-            except Exception as e:
-                logger.error("No found: {0}".format(e.message))
+        try:
+            self.insert_from_csv(schema, table, temp.name)
+        except Exception as e:
+            logger.error("No found: {0}".format(e.message))
