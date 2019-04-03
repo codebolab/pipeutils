@@ -38,7 +38,7 @@ def today(ts="America/New_York"):
     """
     Returns a date object for today but using the timezone `ts`
     """
-    return datetime.now(tz=timezone(ts)).today()
+    return ts_now_utc.now(tz=timezone(ts)).today()
 
 
 def iso_today(ts="America/New_York"):
