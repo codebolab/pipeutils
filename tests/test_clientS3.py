@@ -50,5 +50,25 @@ class TestCientS3(unittest.TestCase):
         except Exception as e:
             passed = 'No such config file' in str(e)
 
+    def test_upload_multiple(self):
+        directory_path = os.path.join(PATH, 'files', 'multiple')
+        s3_directory_path = os.path.join('test', 'multiple')
+        logger.info('Files path %s' % directory_path)
+        list_files = []
+        try:
+            self.client.upload_multiple(directory_path, s3_directory_path,
+                                        extension='txt')
+            bucket = self.client.clientS3.Bucket(self.client.bucket)
+            list_test = bucket.objects.all()
+            list_files = list(map(lambda x: x._key, list(list_test)))
+            passed = True
+        except Exception as e:
+            logger.error(e)
+            passed = False
+        assert passed
+        assert 'test/multiple/file1.txt' in list_files
+        assert 'test/multiple/file2.txt' in list_files
+
+
 if __name__ == '__main__':
     unittest.main()
