@@ -32,6 +32,20 @@ class ClientS3(object):
             else:
                 raise
 
+    def upload_multiple(self, path, s3path, extension=None):
+        '''
+        Args:
+            path (str): the directory path of files.
+            s3path (str): the s3 path to put the files in the bucket.
+            extension (str): Filter through extension of the files to be uploaded.
+        '''
+        for name_file in os.listdir(path):
+            if extension is None or name_file.endswith(extension):
+                source_path =  os.path.join(path, name_file)
+                s3_path = os.path.join(s3path, name_file)
+                self.upload(source_path, s3_path)
+
+
     def download(self, s3path, path):
         '''
         Args:
