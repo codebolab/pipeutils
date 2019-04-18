@@ -36,8 +36,8 @@ class ClientS3(object):
         '''
         Args:
             path (str): the directory path of files.
-            s3path (str): the s3path direction directory in the bucket into s3.
-            extension (str): the extension of file to upload.
+            s3path (str): the s3 path to put the files in the bucket.
+            extension (str): Filter through extension of the files to be uploaded.
         '''
         for name_file in os.listdir(path):
             if extension is None or name_file.endswith(extension):
