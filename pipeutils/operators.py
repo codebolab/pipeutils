@@ -123,7 +123,7 @@ class PopulateVertica(XComParams):
         self.schema = schema
         self.table = table
 
-    def execute(self):
+    def execute(self, context):
         if self.source is None:
             self.source = self.dag_params['source']
         # start the vertica client
