@@ -10,7 +10,16 @@ install_requires = [
     'tzlocal>=1.5.1',
     'avro-python3>=1.8.2',
     'google-api-python-client>=1.4.2',
-    'oauth2client>=1.5.2'
+    'oauth2client>=1.5.2',
+    'docutils==0.14',
+    'boto3>=1.9.132',
+    'numpy>=1.16.2',
+    'pandas>=0.24.2',
+    'pyquery>=1.4.0',
+    'python-dateutil>=2.7.3',
+    'six>=1.12.0',
+    'vertica-python==0.9.4',
+    'python-upwork==1.3.4',
 ]
 
 setup(name='pipeutils',
