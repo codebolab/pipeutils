@@ -37,7 +37,7 @@ class TestTimeStamps(unittest.TestCase):
         """
         dt = ts_now_timezone()
         logger.info('ts_now_timezone %s' % dt.strftime("%d/%m/%y %H:%M"))
-        ts="America/New_York"
+        ts = "America/New_York"
         time = datetime.now(tz=get_localzone()).astimezone(timezone(ts))
         logger.info('time %s' % time.strftime("%d/%m/%y %H:%M"))
         self.assertEqual(dt.strftime("%d/%m/%y %H:%M"), time.strftime("%d/%m/%y %H:%M"))
@@ -65,18 +65,28 @@ class TestTimeStamps(unittest.TestCase):
         ts ="America/New_York"
         time = datetime.now(tz=timezone(ts)).today()
 
-        self.assertEqual(dt.strftime("%d/%m/%y %H:%M"), time.strftime("%d/%m/%y %H:%M"))
+        self.assertEqual(dt.strftime("%d/%m/%y"), time.strftime("%d/%m/%y"))
 
     def test_get_iso_today(self):
         """
         check today and returned in iso format.
         """
         ts = "America/New_York"
+        nyc = timezone(ts)
+        date = datetime.today().astimezone(nyc)
+
         dt = iso_today(ts=ts)
         logger.info('iso_today %s ' % dt)
-        time = datetime.now(tz=timezone(ts)).today().isoformat(' ')
+        time = date.strftime('%Y-%m-%d')
         logger.info('iso_today_time %s ' % time)
+
         self.assertEqual(dt, time)
+        # year
+        self.assertEqual(dt[1], time[1])
+        # month
+        self.assertEqual(dt[2], time[2])
+        # day
+        self.assertEqual(dt[3], time[3])
 
     def test_get_srt_today(self):
         """

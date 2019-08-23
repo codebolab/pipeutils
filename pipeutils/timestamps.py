@@ -5,6 +5,7 @@ from pytz import timezone
 
 LOCAL_TZ = get_localzone()
 TIMEZONE = 'America/New_York'
+ISOFORMAT = '%Y-%m-%d'
 
 
 def ts_now_utc():
@@ -38,15 +39,16 @@ def today(ts="America/New_York"):
     """
     Returns a date object for today but using the timezone `ts`
     """
-    return ts_now_utc.now(tz=timezone(ts)).today()
 
+    nyc = timezone(ts)
+    return datetime.today().astimezone(nyc)
 
 def iso_today(ts="America/New_York"):
     """
     Returns a date string formatted '%Y-%m-%d' for today
     but using the timezone 'ts'
     """
-    return today(ts).isoformat(' ')
+    return today(ts).strftime(ISOFORMAT)
 
 def str_today(ts="America/New_York", format='%Y-%m-%d'):
     """
