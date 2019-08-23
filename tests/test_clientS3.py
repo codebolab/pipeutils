@@ -44,7 +44,7 @@ class TestCientS3(unittest.TestCase):
     def test_download(self):
         path_down = os.path.join(PATH, 'files', 'file1-down.txt')
         passed = False
-        self.client.download('/test-pipeutils/file1.txt', path_down)
+        self.client.download('file1.txt', path_down)
         try:
             passed = True
         except Exception as e:
