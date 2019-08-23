@@ -1,13 +1,13 @@
 import io
 import csv
+import tempfile
 from vertica_python import connect
 from pipeutils import config
 from pipeutils import logger
+from pipeutils.clients.client_s3 import ClientS3
 
-try:
-    VERTICA = config('vertica')
-except Exception as e:
-    logger.info('error config file.')
+VERTICA = config('vertica')
+S3 = config('s3')
 
 
 class Database(object):
@@ -107,3 +107,21 @@ class Vertica(Database):
                                                               ', '.join(dataframe.columns), ",")
             cursor.copy(query, csv_buf.getvalue())
             connect.commit()
+
+    def insert_from_s3(self, schema, table, path):   
+        """
+        Insert rows from a dataframe into of database vertica.
+        Required:
+            schema: (str) vertica schema name
+            table: (str) vertica table name
+            th: (str) Path file in s3
+        """
+        client_s3 = ClientS3(S3['bucket'])
+        temp = tempfile.NamedTemporaryFile()
+        temp.close()
+        client_s3.download(path, temp.name)
+
+        try:
+            self.insert_from_csv(schema, table, temp.name)
+        except Exception as e:
+            logger.error("No found: {0}".format(e.message))

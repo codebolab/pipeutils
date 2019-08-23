@@ -3,14 +3,13 @@ import os
 import logging
 import pandas as pd
 import fnmatch
-from pipeutils.warehouse import Database, Vertica
+from pipeutils.warehouse import Vertica
 from os.path import isfile, join
 
 path = os.path.dirname(os.path.realpath(__file__))
 
 
 class TestClientVertica(unittest.TestCase):
-
     def test_connect(self):
         """
         Check that attempting to open a existent connection
@@ -75,6 +74,23 @@ class TestClientVertica(unittest.TestCase):
         result_2 = cursor.fetchall()
         self.assertEqual(sum(result[0]), sum(result_2[0])-1)
 
+    def test_load_fromS3(self):
+        """
+          Check insert from s3
+        """
+        client = Vertica()
+        conn = client.connect()
+        cursor = conn.cursor()
+        cursor.execute("select count(name) from test.fb_user_bio;")
+        result = cursor.fetchall()
+
+        client = Vertica()
+        path = "users/friends/elmer.mendez.90475069_100026752520930_2018-12-19.csv"
+        Vertica.insert_from_s3(client, 'test', 'fb_user_bio', path)
+
+        cursor.execute("select count(name) from test.fb_user_bio;")
+        result_2 = cursor.fetchall()
+        self.assertNotEqual(result[0], result_2[0])
 
 if __name__ == '__main__':
     unittest.main()
