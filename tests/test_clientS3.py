@@ -69,6 +69,34 @@ class TestCientS3(unittest.TestCase):
         assert 'test/multiple/file1.txt' in list_files
         assert 'test/multiple/file2.txt' in list_files
 
+    def test_upload_recursive_directories(self):
+        '''
+        Test the files uploaded recursively in s3
+        '''
+
+        directory_path = os.path.join(PATH, 'files', 'recursive')
+        s3_directory_path = os.path.join('test', 'recursive')
+
+        try:
+            self.client.upload_recursive(directory_path, s3_directory_path,
+                                         extension='json')
+            bucket = self.client.clientS3.Bucket(self.client.bucket)
+            list_test = bucket.objects.all()
+            list_files = list(map(lambda x: x._key, list(list_test)))
+            passed = True
+        except Exception as e:
+            logger.error(e)
+            passed = False
+
+        assert passed
+        assert 'test/recursive/file.json' in list_files
+        assert 'test/recursive/file.txt' not in list_files
+        assert 'test/recursive/directory1/file.json' in list_files
+        assert 'test/recursive/directory2/file1.json' in list_files
+        assert 'test/recursive/directory2/file2.json' in list_files
+        assert 'test/recursive/directory2/file3.txt' not in list_files
+        assert 'test/recursive/directory1/directory/file.json' in list_files
+
 
 if __name__ == '__main__':
     unittest.main()
