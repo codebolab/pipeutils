@@ -3,12 +3,16 @@ import os
 import logging
 import pandas as pd
 import fnmatch
-from pipeutils.warehouse import Vertica
+from pipeutils.warehouse import (
+    Vertica,
+    Postgres
+)
 from os.path import isfile, join
 
 path = os.path.dirname(os.path.realpath(__file__))
 
 
+'''
 class TestClientVertica(unittest.TestCase):
     def test_connect(self):
         """
@@ -19,7 +23,7 @@ class TestClientVertica(unittest.TestCase):
         client.close()
         """
         Check that attempting to reopen a existent connection
-        and check exist schema in database. 
+        and check exist schema in database.
         """
         conn = client.reconect()
         cursor = conn.cursor()
@@ -41,12 +45,14 @@ class TestClientVertica(unittest.TestCase):
         result = cursor.fetchall()
 
         if os.path.exists(data_path):
-            files = [f for f in os.listdir(data_path) if isfile(join(data_path, f))]
+            files = [f for f in os.listdir(data_path)
+                     if isfile(join(data_path, f))]
             for file in files:
                 logging.info(file.encode('utf-8'))
                 if fnmatch.fnmatch(file, '*.csv'):
                     _file = os.path.join(data_path, file)
-                    Vertica.insert_from_csv(client, 'test', 'fb_user_bio', _file)
+                    Vertica.insert_from_csv(client, 'test',
+                                            'fb_user_bio', _file)
         cursor.execute("select count(name) from test.fb_user_bio;")
         result_2 = cursor.fetchall()
         self.assertNotEqual(result[0], result_2[0])
@@ -66,8 +72,10 @@ class TestClientVertica(unittest.TestCase):
 
         pdata = pd.DataFrame(columns=col_names, index=None)
 
-        pdata.loc[len(pdata)] = ['CBA (Centro Boliviano Americano)', 'Education',
-                                 'https://www.facebook.com/CBA.SC/', '1401639694']
+        pdata.loc[len(pdata)] = ['CBA (Centro Boliviano Americano)',
+                                 'Education',
+                                 'https://www.facebook.com/CBA.SC/',
+                                 '1401639694']
         Vertica.insert_from_dataframe(client, 'test', 'fb_user_bio', pdata)
 
         cursor.execute("select count(name) from test.fb_user_bio;")
@@ -85,12 +93,15 @@ class TestClientVertica(unittest.TestCase):
         result = cursor.fetchall()
 
         client = Vertica()
-        path = "users/friends/elmer.mendez.90475069_100026752520930_2018-12-19.csv"
+        path = "users/friends/elmer.mendez." \
+               "90475069_100026752520930_2018-12-19.csv"
         Vertica.insert_from_s3(client, 'test', 'fb_user_bio', path)
 
         cursor.execute("select count(name) from test.fb_user_bio;")
         result_2 = cursor.fetchall()
         self.assertNotEqual(result[0], result_2[0])
+'''
+
 
 if __name__ == '__main__':
     unittest.main()

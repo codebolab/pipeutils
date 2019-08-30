@@ -3,9 +3,10 @@ import os
 import logging
 
 HOME = os.path.expanduser("~")
-CONFIG_PATH = os.environ.get('PIPE_CONFIG_PATH', os.path.join(HOME, '.pipeutils', 'config'))
+CONFIG_PATH = os.environ.get('PIPE_CONFIG_PATH',
+                             os.path.join(HOME, '.pipeutils', 'config'))
 path = os.path.dirname(os.path.realpath(__file__))
-print("path: %s " % path)
+
 from pipeutils import config
 from pipeutils import logger
 
@@ -23,6 +24,7 @@ class TestConfigFile(unittest.TestCase):
         logger.info(CONFIG_PATH)
         try:
             c = config('base', dir_path=CONFIG_PATH)
+            logger.info(c)
             passed = True
         except Exception as e:
             passed = 'No such config file' in str(e)
@@ -59,6 +61,7 @@ class TestConfigFile(unittest.TestCase):
             passed = False
         except Exception as e:
             passed = True
+            logger.info('No such config file' in str(e))
         assert passed
 
 

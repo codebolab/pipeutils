@@ -1,7 +1,7 @@
 import unittest
 import os
 
-from pipeutils.clients.client_GDrive import GDrive #as DriveClient
+from pipeutils.clients.client_GDrive import GDrive
 from pipeutils import logger
 
 
@@ -33,4 +33,3 @@ class TestCientGdrive(unittest.TestCase):
 
 if __name__ == '__main__':
     unittest.main()
-
