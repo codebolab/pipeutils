@@ -6,7 +6,7 @@ import avro
 import json
 
 from pipeutils.serializers.serializer import AvroSerializer, JSONSerializer
-from pipeutils.avro import registry
+from pipeutils.avro import Registry
 from pipeutils import logger
 
 if six.PY2:
@@ -20,6 +20,9 @@ path_configs = os.path.join(path, 'configs')
 version = 3
 name = 'test'
 
+registry = Registry(path_configs)
+os.environ['PIPE_SCHEMA_REGISTRY'] = '{0}'.format(path_configs)
+
 
 class Testserialize(unittest.TestCase):
 
@@ -29,8 +32,10 @@ class Testserialize(unittest.TestCase):
         serializer = AvroSerializer()
         data = {"name": "TEXT INTO MESSAGE", "favorite_color": "111",
                 "favorite_number": random.randint(0, 10)}
-        serialize = serializer.serialize(data, name, version)
-        self.assertIn(bytes("TEXT INTO MESSAGE", "utf-8"), serialize)
+        logger.info("export PIPE_SCHEMA_REGISTRY={}".format(path_configs))
+        if os.environ.get('PIPE_SCHEMA_REGISTRY'):
+            serialize = serializer.serialize(data, name, version)
+            self.assertIn(bytes("TEXT INTO MESSAGE", "utf-8"), serialize)
 
     def test_get_deserialize_avro(self):
         """
@@ -39,9 +44,11 @@ class Testserialize(unittest.TestCase):
 
         data = {"name": "test", "favorite_color": "Red", "favorite_number": 0}
 
-        bytes_text = serializer.serialize(data, name, version)
-        serialize = serializer.deserialize(bytes_text, name, version)
-        self.assertEqual(serialize, data)
+        logger.info("export PIPE_SCHEMA_REGISTRY with {}".format(path_configs))
+        if os.environ.get('PIPE_SCHEMA_REGISTRY'):
+            bytes_text = serializer.serialize(data, name, version)
+            serialize = serializer.deserialize(bytes_text, name, version)
+            self.assertEqual(serialize, data)
 
     def test_get_serialize_json(self):
         """

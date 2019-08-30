@@ -35,7 +35,6 @@ class TesSnapShot(unittest.TestCase):
         """
         logger.info("Read")
         try:
-            print(file_path)
             _file = read(file_path)
             self.assertIsNotNone(_file)
             passed = True

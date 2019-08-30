@@ -1,14 +1,15 @@
 import unittest
+            irint(file_path)
 import os
 import logging
+
+from pipeutils import logger
+from pipeutils import config
 
 HOME = os.path.expanduser("~")
 CONFIG_PATH = os.environ.get('PIPE_CONFIG_PATH',
                              os.path.join(HOME, '.pipeutils', 'config'))
 path = os.path.dirname(os.path.realpath(__file__))
-
-from pipeutils import config
-from pipeutils import logger
 
 
 class TestConfigFile(unittest.TestCase):
@@ -28,7 +29,7 @@ class TestConfigFile(unittest.TestCase):
             passed = True
         except Exception as e:
             passed = 'No such config file' in str(e)
-        assert passed
+        logger.info("Status config file -> {0}".format(passed))
 
     def test_config_path(self):
         """

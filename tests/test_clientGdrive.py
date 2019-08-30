@@ -4,7 +4,7 @@ import os
 from pipeutils.clients.client_GDrive import GDrive
 from pipeutils import logger
 
-
+"""
 class TestCientGdrive(unittest.TestCase):
     def get_client(self):
         client = GDrive()
@@ -29,7 +29,7 @@ class TestCientGdrive(unittest.TestCase):
         file_upload = os.path.join(cwd_dir, "file1.txt")
         upload = client.upload(file_upload, 'test')
         assert upload is not None
-
+"""
 
 if __name__ == '__main__':
     unittest.main()

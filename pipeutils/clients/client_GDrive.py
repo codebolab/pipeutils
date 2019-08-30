@@ -14,9 +14,6 @@ try:
     from oauth2client import client
     from oauth2client import tools
     from oauth2client import file
-    import google.auth
-    from google.oauth2 import service_account
-    import google.auth
 
 except ImportError:
     logger.info('goole-api-python-client is not installed. Try:')
@@ -24,22 +21,23 @@ except ImportError:
     logger.info('pip install --upgrade oauth2client')
     sys.exit(1)
 
-from pipeutils import config
 GDRIVE = config('gdrive')
+
 
 class GDrive(object):
 
-    def __init__(self):
+    def __init__(self, **args):
         self.creds = self.get_credentials()
-        self.service = self.initialize_service() 
+        self.service = self.initialize_service()
 
-    def get_credentials(self):
+    def get_credentials(self, **args):
         credential_path = os.path.join(GDRIVE['secret_file'])
         logger.info('credential_path %s' % credential_path)
         store = file.Storage(credential_path)
         creds = store.get()
         if not creds or creds.refresh(creds.authorize(Http())):
-            flow = client.flow_from_clientsecrets(GDRIVE['secret_file'], GDRIVE['scopes'])
+            flow = client.flow_from_clientsecrets(GDRIVE['secret_file'],
+                                                  GDRIVE['scopes'])
             if args:
                 creds = tools.run_flow(flow, store, args)
             else:
@@ -50,7 +48,7 @@ class GDrive(object):
         self.creds = self.get_credentials()
         http = self.creds.authorize(Http())
         return build('drive', 'v3', http=http)
-    
+
     def get_folder_id(self, name):
         """
         Return id of Folder name
@@ -58,10 +56,10 @@ class GDrive(object):
         results = self.service.files().list(
             pageSize=10,
             q=("name = '{0}'".format(name) +
-            " and mimeType = 'application/vnd.google-apps.folder'"),
+               " and mimeType = 'application/vnd.google-apps.folder'"),
             corpora="user",
             fields="nextPageToken, files(id, name, webContentLink, " +
-                "createdTime, modifiedTime)").execute()
+                   "createdTime, modifiedTime)").execute()
         item = results.get('files', [])
         logger.info(item)
         if not item:
@@ -72,18 +70,19 @@ class GDrive(object):
         """
         List items into Google Drive
         """
-        results = self.service.files().list(fields="nextPageToken, files(id, name,mimeType)").execute()
+        results = self.service.files().list(
+            fields="nextPageToken, files(id, name, mimeType)").execute()
         items = results.get('files', [])
         if not items:
             logger.info('No files found.')
         else:
-            return items        
+            return items
 
     def upload(self, path, gpath):
         '''
         Args:
             path (str): The `path` of file.
-            gpath (str): The gpath folder in Google Drive. 
+            gpath (str): The gpath folder in Google Drive.
         '''
         mime = MimeTypes()
         file_metadata = {
@@ -93,19 +92,20 @@ class GDrive(object):
             file_metadata['parents'] = [self.get_folder_id(gpath)]
 
         media = MediaFileUpload(path,
-                                mimetype=mime.guess_type(os.path.basename(path))[0],
+                                mimetype=mime.guess_type(
+                                    os.path.basename(path))[0],
                                 resumable=True)
         id_file = []
         try:
             file = self.service.files().create(body=file_metadata,
-                                                media_body=media,
-                                                fields='id').execute()
+                                               media_body=media,
+                                               fields='id').execute()
             id_file = file.get('id')
         except HttpError:
             logger.info('corrupted file')
             pass
         return id_file
-    
+
     def download(self, gpath, path):
         '''
         Args:
@@ -129,4 +129,3 @@ class GDrive(object):
                     f.close()
         else:
             logger.info('No files found.')
-
