@@ -67,7 +67,6 @@ class TestClientPostgres(unittest.TestCase):
                                                  _file)
         cursor.execute("select count(id) from test_job;")
         result_2 = cursor.fetchall()
-        print(result_2)
         self.assertNotEqual(result[0], result_2[0])
 
 

@@ -4,6 +4,9 @@ from pipeutils.warehouse import Vertica, Postgres
 from pipeutils import logger
 from subprocess import Popen
 from airflow.models import BaseOperator
+from airflow.models import Variable
+
+ANALITICS_PLATFORM = Variable.get("ANALITICS_PLATFORM", default_var='')
 
 s3 = config('s3')
 
@@ -64,9 +67,10 @@ class UploadToS3(XComParams):
 
         logger.info(self.destination)
         s3_client = ClientS3(s3['bucket'])
-        s3_client.upload_multiple(self.source, self.destination,
-                                  self.extension)
+        result = s3_client.upload_multiple(self.source, self.destination,
+                                           self.extension)
         logger.info("The files has been saved successfully")
+        return result
 
 
 class PopulateDjango(XComParams):
@@ -91,7 +95,7 @@ class PopulateDjango(XComParams):
         if self.source is None:
             self.source = self.dag_params['source']
         if self.django_manage is None:
-            self.django_manage = '$ANALITICS_PLATFORM/server/manage.py'
+            self.django_manage = ANALITICS_PLATFORM + '/server/manage.py'
 
         if self.model_name is None:
             self.model_name = 'save_jobs_from_csv_to_django_database'
@@ -168,6 +172,7 @@ class PopulatePostgres(XComParams):
         # start the Postgres client
         client = Postgres()
         # Save the data into the Postgres from the csv path
-        Postgres.insert_from_csv(client, self.table,
-                                 self.source, delimiter=';')
+        result = Postgres.copy_expert(client, self.table,
+                                      self.source)
         logger.info("The CSV has been saved successfully")
+        return result

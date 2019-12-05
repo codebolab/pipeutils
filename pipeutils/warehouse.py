@@ -178,7 +178,7 @@ class Postgres(Database):
         self.connection = DataPostgres.connect(**self.options)
         return self.connection
 
-    def insert_from_csv(self, table, path, delimiter=';'):
+    def copy_expert(self, table, path, delimiter=';'):
         """
         Insert rows from a csv into the database.
         Required:
@@ -188,13 +188,14 @@ class Postgres(Database):
         connect = self.connect()
 
         if connect is not None:
-
-            cursor = connect.cursor()
             with open(path, 'r') as fs:
                 query = "COPY {} " \
                         "FROM STDIN " \
                         "WITH CSV HEADER DELIMITER '{}'".format(table,
                                                                 delimiter)
-                # cursor.copy_from(fs, table, sep=delimiter)
-                cursor.copy_expert(query, fs)
-            connect.commit()
+                with connect.cursor() as cur:
+                    cur.copy_expert(sql=query, file=fs)
+                    connect.commit()
+                    cur.close()
+                    connect.close()
+        return True
