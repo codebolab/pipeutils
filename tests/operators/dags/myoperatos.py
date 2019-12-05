@@ -1,31 +1,43 @@
-import logging as log
+import unittest
+import os
+from unittest.mock import patch
 from datetime import datetime
 from airflow import DAG
-from pipeutils.operators import PopulateDjango, XComParams
+from airflow.models import TaskInstance
+from pipeutils.operators import UploadToS3
 
-args = {
-    'task_id': 'runner',
-    'owner': 'airflow',
-    'start_date': datetime(2017, 3, 20),
-    'provide_context': True
-}
-
-dag = DAG('dag_1',
-          description='xComParams',
-          schedule_interval='0 12 * * *',
-          default_args=args)
+fileDir = os.path.dirname(os.path.abspath(__file__))
+parentDir = os.path.dirname(os.path.dirname(fileDir))
 
 
-class Test1(XComParams):
-    def execute(self, context):
-        log.info("TEST 1 ")
-        return 'test1 '
+class TestMyOperator(unittest.TestCase):
+    '''
+    Review docs in https://bcb.github.io/airflow/testing-dags for dags test
+    '''
 
-test1 = Test1(task_id='test1', dag=dag, lookups={'source': 'test2'})
-django = PopulateDjango(task_id='django_1', lookups={'source': 'test1'}, dag=dag, source=None, model_name=None, django_settings=None)
+    def setUp(self):
+        self.kwargs = dict(
+            model_name='test',
+            django_manage='',
+            source='',
+            task_id='test_dag',
+            dag=None
+        )
 
-#test1 >> django
-test1.set_upstream(django)
+    @patch('pipeutils.operators.logger.info')
+    def test_s3_operator(self, info):
+
+        dag = DAG(dag_id='foo', start_date=datetime(2018, 1, 1))
+        files = os.path.join(parentDir, 'files', 'multiple')
+        task = UploadToS3(task_id='django_1', dag=dag,
+                          destination='test',
+                          extension='txt',
+                          source=files)
+        ti = TaskInstance(task=task, execution_date=datetime.now())
+        task.execute(ti.get_template_context())
+
+        info.assert_called()
 
 
-
+if __name__ == '__main__':
+    unittest.main()
