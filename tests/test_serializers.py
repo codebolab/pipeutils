@@ -1,11 +1,12 @@
 import unittest
 import os
-import logging
 import random
 import six
 import avro
+import json
 
 from pipeutils.serializers.serializer import AvroSerializer, JSONSerializer
+from pipeutils.avro import Registry
 from pipeutils import logger
 
 if six.PY2:
@@ -19,19 +20,22 @@ path_configs = os.path.join(path, 'configs')
 version = 3
 name = 'test'
 
+registry = Registry(path_configs)
+os.environ['PIPE_SCHEMA_REGISTRY'] = '{0}'.format(path_configs)
+
 
 class Testserialize(unittest.TestCase):
 
     def test_get_serialize_avro(self):
         """
         """
-        logger.setLevel(logging.DEBUG)
-        logger.info("testing")
-
         serializer = AvroSerializer()
-        data = {"name": "TEXT INTO MESSAGE", "favorite_color": "111", "favorite_number": random.randint(0, 10)}
-        serialize = serializer.serialize(data, name, version)
-        self.assertIn(bytes("TEXT INTO MESSAGE", "utf-8"), serialize)
+        data = {"name": "TEXT INTO MESSAGE", "favorite_color": "111",
+                "favorite_number": random.randint(0, 10)}
+        logger.info("export PIPE_SCHEMA_REGISTRY={}".format(path_configs))
+        if os.environ.get('PIPE_SCHEMA_REGISTRY'):
+            serialize = serializer.serialize(data, name, version)
+            self.assertIn(bytes("TEXT INTO MESSAGE", "utf-8"), serialize)
 
     def test_get_deserialize_avro(self):
         """
@@ -40,20 +44,22 @@ class Testserialize(unittest.TestCase):
 
         data = {"name": "test", "favorite_color": "Red", "favorite_number": 0}
 
-        bytes_text = serializer.serialize(data, name, version)
-        serialize = serializer.deserialize(bytes_text, name, version)
-        self.assertEqual(serialize, data)
+        logger.info("export PIPE_SCHEMA_REGISTRY with {}".format(path_configs))
+        if os.environ.get('PIPE_SCHEMA_REGISTRY'):
+            bytes_text = serializer.serialize(data, name, version)
+            serialize = serializer.deserialize(bytes_text, name, version)
+            self.assertEqual(serialize, data)
 
     def test_get_serialize_json(self):
         """
         """
-        logger.setLevel(logging.DEBUG)
-        logger.info("testing")
-
-        avro_serialiser = AvroSerializer()
         serializer = JSONSerializer()
 
-        data = {"name": "TEXT INTO MESSAGE", "favorite_color": "Black", "favorite_number": 2}
+        data = {
+            "nama": "TEXT INTO MESSAGE",
+            "favorite_color": "Black",
+            "favorite_number": 2
+        }
 
         schema_dict = {
               "type": "record",
@@ -74,42 +80,45 @@ class Testserialize(unittest.TestCase):
         logger.info("DATA %s" % serialize)
 
         args = {
-            'schema_name': 'test',
+            'name': 'test',
             'version': 3,
         }
 
         # GET SCHEMA.
-        avro_schema = avro_serialiser.get_schema(**args)
+        avro_schema = registry.get(**args)
 
         kwargs = {
             'schema': avro_schema
         }
 
         json_data = serializer.serialize(data, **kwargs)
-        _avro = '{"name": "TEXT INTO MESSAGE", "favorite_color": "Black", "favorite_number": 2}'
-        
-        logger.info("DATA %s" % _avro)
 
-        self.assertEqual(json_data, _avro)
+        _avro = {
+            "nama": "TEXT INTO MESSAGE",
+            "favorite_color": "Black",
+            "favorite_number": 2
+        }
+
+        self.assertEqual(json_data, json.dumps(_avro))
 
     def test_get_deserialize_json(self):
         """
         """
-        logger.setLevel(logging.DEBUG)
-        logger.info("testing")
-
         serializer = JSONSerializer()
-        avro_serialiser = AvroSerializer()
 
-        data = {'name':'TEXT INTO MESSAGE','favorite_color':'RED', 'favorite_number':2}
+        data = {
+            'name': 'TEXT INTO MESSAGE',
+            'favorite_color': 'RED',
+            'favorite_number': 2
+        }
 
         args = {
-            'schema_name': 'test',
+            'name': 'test',
             'version': 3,
         }
 
         # GET SCHEMA.
-        avro_schema = avro_serialiser.get_schema(**args)
+        avro_schema = registry.get(**args)
 
         kwargs = {
             'schema': avro_schema
@@ -117,8 +126,8 @@ class Testserialize(unittest.TestCase):
         _data = serializer.serialize(data, **kwargs)
 
         dump_data = serializer.deserialize(_data, **kwargs)
-        self.assertEqual(dump_data, data)
+        self.assertEqual(data, dump_data)
+
 
 if __name__ == '__main__':
     unittest.main()
-
