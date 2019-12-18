@@ -198,4 +198,5 @@ class Postgres(Database):
                     connect.commit()
                     cur.close()
                     connect.close()
-        return True
+
+        return path
