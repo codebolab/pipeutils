@@ -3,8 +3,15 @@ from datetime import datetime
 from tzlocal import get_localzone
 from pytz import timezone
 from pipeutils import logger
-from pipeutils.timestamps import ts_now_utc, iso_utc_now, ts_now_timezone
-from pipeutils.timestamps import iso_utc_timezone, today, iso_today, str_today
+from pipeutils.timestamps import (
+    ts_now_utc,
+    iso_utc_now,
+    ts_now_timezone,
+    iso_utc_timezone,
+    today,
+    iso_today,
+    str_today
+)
 
 
 class TestTimeStamps(unittest.TestCase):

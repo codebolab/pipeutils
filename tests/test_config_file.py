@@ -1,5 +1,4 @@
 import unittest
-            irint(file_path)
 import os
 import logging
 
