@@ -35,16 +35,18 @@ class ClientS3(object):
     def upload_multiple(self, path, s3path, extension=None):
         '''
         Args:
-            path (str): The directory path of files.
-            s3path (str): The s3 path to put the files in the bucket.
+            path (str): the directory path of files.
+            s3path (str): the s3 path to put the files in the bucket.
             extension (str): Filter through extension of the files to be
-                             uploaded.
+            uploaded.
         '''
+        num_files = 0
         for name_file in os.listdir(path):
             if extension is None or name_file.endswith(extension):
                 source_path = os.path.join(path, name_file)
                 s3_path = os.path.join(s3path, name_file)
                 self.upload(source_path, s3_path)
+                num_files += 1
 
     def upload_recursive(self, path, s3path, extension=None):
         '''
@@ -62,6 +64,9 @@ class ClientS3(object):
             d = d[1:] if d.startswith('/') else d
             s3path_to_load = os.path.join(s3path, d)
             self.upload_multiple(root, s3path_to_load, extension=extension)
+            
+        logger.info(f"Files uploaded {num_files}")
+        return num_files
 
     def download(self, s3path, path):
         '''
