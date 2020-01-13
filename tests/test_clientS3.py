@@ -1,8 +1,6 @@
 import unittest
 import os
-import logging
 
-from pipeutils import config
 from pipeutils.clients.client_s3 import ClientS3
 from pipeutils import logger
 
@@ -17,8 +15,9 @@ class TestCientS3(unittest.TestCase):
         '''connections and will close automatically after a few minutes of idle time.
         I wouldn't worry about trying to close them.
         '''
-        #self.client.close()
-        pass
+        bucket = self.client.clientS3.Bucket(self.client.bucket)
+        objs = bucket.objects.all()
+        objs.delete()
 
     def test_list(self):
         """
@@ -30,7 +29,10 @@ class TestCientS3(unittest.TestCase):
             logger.info('list s3 > %s' % list_s3)
             passed = True
         except Exception as e:
-            passed = 'No such config file' in str(e)
+            passed = False
+            logger.info(f"No such config file in {str(e)}")
+
+        assert passed
 
     def test_upload(self):
         files_path = os.path.join(PATH, 'files', 'file1.txt')
@@ -39,7 +41,9 @@ class TestCientS3(unittest.TestCase):
             self.client.upload(files_path, 'file1.txt')
             passed = True
         except Exception as e:
-            passed = 'No such config file' in str(e)
+            logger.info(f"No such config file in {str(e)}")
+            passed = False
+        assert passed
 
     def test_download(self):
         path_down = os.path.join(PATH, 'files', 'file1-down.txt')
@@ -48,7 +52,10 @@ class TestCientS3(unittest.TestCase):
         try:
             passed = True
         except Exception as e:
-            passed = 'No such config file' in str(e)
+            passed = False
+            logger.info(f"No such config file' in {str(e)}")
+
+        assert passed
 
     def test_upload_multiple(self):
         directory_path = os.path.join(PATH, 'files', 'multiple')
@@ -68,6 +75,36 @@ class TestCientS3(unittest.TestCase):
         assert passed
         assert 'test/multiple/file1.txt' in list_files
         assert 'test/multiple/file2.txt' in list_files
+
+    def test_upload_recursive_directories(self):
+        '''
+        Test the files uploaded recursively in s3
+        '''
+        directory_path = os.path.join(PATH, 'files', 'recursive')
+        s3_directory_path = os.path.join('test', 'recursive')
+        list_files = []
+
+        try:
+            self.client.upload_recursive(directory_path, s3_directory_path,
+                                         extension='json')
+            bucket = self.client.clientS3.Bucket(self.client.bucket)
+            list_test = bucket.objects.all()
+            list_files = list(map(lambda x: x._key, list(list_test)))
+            passed = True
+        except Exception as e:
+            logger.error(e)
+            passed = False
+
+        self.client.upload_recursive(directory_path, s3_directory_path,
+                                     extension='json')
+        assert passed
+        assert 'test/recursive/file.json' in list_files
+        assert 'test/recursive/file.txt' not in list_files
+        assert 'test/recursive/directory1/file.json' in list_files
+        assert 'test/recursive/directory2/file1.json' in list_files
+        assert 'test/recursive/directory2/file2.json' in list_files
+        assert 'test/recursive/directory2/file3.txt' not in list_files
+        assert 'test/recursive/directory1/directory/file.json' in list_files
 
 
 if __name__ == '__main__':

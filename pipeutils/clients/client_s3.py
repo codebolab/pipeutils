@@ -48,6 +48,23 @@ class ClientS3(object):
                 self.upload(source_path, s3_path)
                 num_files += 1
 
+    def upload_recursive(self, path, s3path, extension=None):
+        '''
+        Upload recursivitly all files inside in the directory even the files
+        in directories inside the path.
+
+        Args:
+            path (str): The directory path.
+            s3path (str): The s3 path to put the directory.
+            extension (str): Filter through extension of the files to be
+                             uploaded.
+        '''
+        for root, dirs, files in os.walk(path):
+            d = root.replace(path, '')
+            d = d[1:] if d.startswith('/') else d
+            s3path_to_load = os.path.join(s3path, d)
+            self.upload_multiple(root, s3path_to_load, extension=extension)
+            
         logger.info(f"Files uploaded {num_files}")
         return num_files
 
