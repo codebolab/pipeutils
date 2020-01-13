@@ -65,7 +65,6 @@ class UploadToS3(XComParams):
         s3_client = ClientS3(s3['bucket'])
         result = s3_client.upload_multiple(self.source, self.destination,
                                            self.extension)
-        logger.ingo(result)
         logger.info("The files has been saved successfully")
         return self.source
 
