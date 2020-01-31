@@ -64,9 +64,6 @@ class ClientS3(object):
             d = d[1:] if d.startswith('/') else d
             s3path_to_load = os.path.join(s3path, d)
             self.upload_multiple(root, s3path_to_load, extension=extension)
-            
-        logger.info(f"Files uploaded {num_files}")
-        return num_files
 
     def download(self, s3path, path):
         '''

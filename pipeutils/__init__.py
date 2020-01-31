@@ -40,6 +40,7 @@ def config(name='base', dir_path=CONFIG_PATH):
 
     config.read([path])
     configuration = dict(config.items(name))
+    print(configuration)
 
     return configuration
 
@@ -54,7 +55,3 @@ class ConfigNotFound(ValueError):
             raise ConfigNotFound("Failed not open File not found.")
         except ConfigNotFound as e:
             logger.error('ConfigNotFound Exception! ', e.strerror)
-
-
-
-PIPE_PATH = os.path.os.path.dirname(__file__)

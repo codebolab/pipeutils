@@ -7,7 +7,7 @@ from pipeutils import config
 from pipeutils import logger
 from pipeutils.clients.client_s3 import ClientS3
 
-VERTICA = config('vertica')
+# VERTICA = config('vertica')
 POSTGRES = config('postgres')
 S3 = config('s3')
 
@@ -24,11 +24,11 @@ class Vertica(Database):
         self.options = {
             key: value for key, value in options.items() if value is not None
         }
-        self.options.setdefault('host', VERTICA['host'])
-        self.options.setdefault('port', VERTICA['port'])
-        self.options.setdefault('user', VERTICA['user'])
-        self.options.setdefault('database', VERTICA['database'])
-        self.options.setdefault('password', VERTICA['password'])
+        # self.options.setdefault('host', VERTICA['host'])
+        # self.options.setdefault('port', VERTICA['port'])
+        # self.options.setdefault('user', VERTICA['user'])
+        # self.options.setdefault('database', VERTICA['database'])
+        # self.options.setdefault('password', VERTICA['password'])
 
     def connect(self):
         """
@@ -153,16 +153,12 @@ class Postgres(Database):
         Return:
             connection
         """
-        if self.connection is not None:
-            logger.info(" connection: %s " % (self.connection is not None))
-            return self.connection
         try:
             self.connection = DataPostgres.connect(**self.options)
+            return self.connection
         except Exception as e:
             logger.critical("Unable to connect to DB: {0}".format(e.message))
             raise
-
-        return self.connection
 
     def close(self):
         """
@@ -196,7 +192,6 @@ class Postgres(Database):
                 with connect.cursor() as cur:
                     cur.copy_expert(sql=query, file=fs)
                     connect.commit()
-                    cur.close()
                     connect.close()
 
         return path
