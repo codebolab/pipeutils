@@ -40,7 +40,10 @@ class Registry:
         logger.info(f"   path: {self.path}")
 
     def _cache(self, key, value):
-        # overwrite, not much performance impact, as shouldn't be happening often
+        '''
+        overwrite, not much performance impact, as shouldn't be happening
+        often.
+        '''
         self.cache_schemas[key] = value
 
     def get(self, name=None, version=VERSION):
@@ -52,7 +55,7 @@ class Registry:
             return self.cache_schemas[key]
 
         if os.path.exists(_schema):
-            element = os.listdir(_schema)  
+            element = os.listdir(_schema)
             avro_file = '%s.avsc' % version
             logger.info("Files - > %s" % sorted(element))
             if avro_file in sorted(element):
@@ -61,11 +64,11 @@ class Registry:
                 try:
                     with open(_file, 'rb') as f:
                         data = f.read()
-                    # logger.info(data)
                     self._cache(key, avro.schema.Parse(data))
                     return avro.schema.Parse(data)
                 except IOError as e:
-                    logger.warning("See exception below; skipping file %s", _file)
+                    logger.warning("See exception below; skipping file %s",
+                                   _file)
                     logger.exception(e)
             else:
                 raise SchemaVersionNotFound

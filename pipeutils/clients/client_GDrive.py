@@ -19,11 +19,11 @@ GDRIVE = config('gdrive')
 
 class GDrive(object):
 
-    def __init__(self):
+    def __init__(self, **args):
         self.creds = self.get_credentials()
         self.service = self.initialize_service()
 
-    def get_credentials(self):
+    def get_credentials(self, **args):
         credential_path = os.path.join(GDRIVE['secret_file'])
         store = file.Storage(credential_path)
         creds = store.get()
@@ -54,7 +54,6 @@ class GDrive(object):
         return item[0]['id']
 
     def listfiles(self):
-        results = self.service.files().list(fields="nextPageToken, files(id, name,mimeType)").execute()
         items = results.get('files', [])
         if not items:
             logger.info('No files found.')
@@ -70,13 +69,14 @@ class GDrive(object):
             file_metadata['parents'] = [self.get_folder_id(gpath)]
 
         media = MediaFileUpload(path,
-                                mimetype=mime.guess_type(os.path.basename(path))[0],
+                                mimetype=mime.guess_type(
+                                    os.path.basename(path))[0],
                                 resumable=True)
         id_file = []
         try:
             file = self.service.files().create(body=file_metadata,
-                                                media_body=media,
-                                                fields='id').execute()
+                                               media_body=media,
+                                               fields='id').execute()
             id_file = file.get('id')
         except HttpError:
             logger.info('corrupted file')
