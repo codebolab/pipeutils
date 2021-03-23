@@ -1,7 +1,7 @@
 import unittest
 import logging
 import random
-from pipeutils.serializers.serializer import AvroSerializer, JSONSerializer
+from pipeutils.serializers import AvroSerializer, JSONSerializer
 from pipeutils import logger
 
 

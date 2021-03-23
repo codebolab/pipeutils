@@ -105,7 +105,7 @@ _avro_test_5 = json.dumps({
 })
 
 
-version = 2
+version = 3
 name = 'test'
 
 
