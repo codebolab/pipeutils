@@ -1,20 +1,15 @@
 import os
 import six
 import logging
+import configparser as ConfigParser
+from pipeutils import exceptions
 
 logging.basicConfig(level=logging.DEBUG)
 logger = logging.getLogger(__name__)
-
-if six.PY3:
-    import configparser as ConfigParser
-else:
-    import ConfigParser
-
 HOME = os.path.expanduser("~")
-CONFIG_PATH = os.environ.get('PIPE_CONFIG_PATH', os.path.join(HOME, '.pipeutils', 'config'))
 
 
-def config(name='base', dir_path=CONFIG_PATH):
+def config(name='base', path=None):
     '''
     Args:
         name (str): The `name` is name of config file.
@@ -23,15 +18,19 @@ def config(name='base', dir_path=CONFIG_PATH):
         (dict) a configuration read from a file found in CONFIG_PATH
     '''
 
-    path = None
+    if path is None:
+        path = os.environ.get(
+            'PIPE_CONFIG_PATH',
+            os.path.join(HOME, '.pipeutils', 'config')
+        )
 
     # check file exists
-    _file = os.path.join(dir_path, '%s.conf' % name)
-    logger.info('Config File: %s' % _file)
-    if os.path.exists(os.path.join(dir_path, _file)):
-        path = os.path.join(dir_path, _file)
+    path_file = os.path.join(path, '%s.conf' % name)
+    logger.info('Config File: %s' % path_file)
+    if os.path.exists(os.path.join(path, path_file)):
+        path = os.path.join(path, path_file)
     else:
-        raise ConfigNotFound("Failed not open for {!r})".format(name), 'ConfigNotFound')
+        raise exceptions.ConfigNotFound()
 
     if six.PY3:
         config = ConfigParser.ConfigParser()
@@ -42,19 +41,6 @@ def config(name='base', dir_path=CONFIG_PATH):
     configuration = dict(config.items(name))
 
     return configuration
-
-
-class ConfigNotFound(ValueError):
-
-    def __init__(self, arg):
-        self.strerror = arg
-        self.args = {arg}
-
-        try:
-            raise ConfigNotFound("Failed not open File not found.")
-        except ConfigNotFound as e:
-            logger.error('ConfigNotFound Exception! ', e.strerror)
-
 
 
 PIPE_PATH = os.path.os.path.dirname(__file__)

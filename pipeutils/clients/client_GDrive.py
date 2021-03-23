@@ -1,25 +1,18 @@
 import os
-import sys
 import io
 
 from pipeutils import logger
 from pipeutils import config
 from mimetypes import MimeTypes
 
-try:
-    from httplib2 import Http
-    from googleapiclient.http import MediaFileUpload, MediaIoBaseDownload
-    from googleapiclient.errors import HttpError
-    from apiclient.discovery import build
-    from oauth2client import client
-    from oauth2client import tools
-    from oauth2client import file
+from httplib2 import Http
+from googleapiclient.http import MediaFileUpload, MediaIoBaseDownload
+from googleapiclient.errors import HttpError
+from apiclient.discovery import build
+from oauth2client import client
+from oauth2client import tools
+from oauth2client import file
 
-except ImportError:
-    logger.info('goole-api-python-client is not installed. Try:')
-    logger.info('pip install --upgrade google-api-python-client')
-    logger.info('pip install --upgrade oauth2client')
-    sys.exit(1)
 
 GDRIVE = config('gdrive')
 
@@ -32,16 +25,13 @@ class GDrive(object):
 
     def get_credentials(self, **args):
         credential_path = os.path.join(GDRIVE['secret_file'])
-        logger.info('credential_path %s' % credential_path)
         store = file.Storage(credential_path)
         creds = store.get()
         if not creds or creds.refresh(creds.authorize(Http())):
-            flow = client.flow_from_clientsecrets(GDRIVE['secret_file'],
-                                                  GDRIVE['scopes'])
-            if args:
-                creds = tools.run_flow(flow, store, args)
-            else:
-                creds = tools.run(flow, store)
+            flow = client.flow_from_clientsecrets(
+                GDRIVE['secret_file'], GDRIVE['scopes']
+            )
+            creds = tools.run(flow, store)
         return creds
 
     def initialize_service(self):
@@ -50,9 +40,6 @@ class GDrive(object):
         return build('drive', 'v3', http=http)
 
     def get_folder_id(self, name):
-        """
-        Return id of Folder name
-        """
         results = self.service.files().list(
             pageSize=10,
             q=("name = '{0}'".format(name) +
@@ -67,11 +54,6 @@ class GDrive(object):
         return item[0]['id']
 
     def listfiles(self):
-        """
-        List items into Google Drive
-        """
-        results = self.service.files().list(
-            fields="nextPageToken, files(id, name, mimeType)").execute()
         items = results.get('files', [])
         if not items:
             logger.info('No files found.')
@@ -79,11 +61,6 @@ class GDrive(object):
             return items
 
     def upload(self, path, gpath):
-        '''
-        Args:
-            path (str): The `path` of file.
-            gpath (str): The gpath folder in Google Drive.
-        '''
         mime = MimeTypes()
         file_metadata = {
             'name': os.path.basename(path),
@@ -107,11 +84,6 @@ class GDrive(object):
         return id_file
 
     def download(self, gpath, path):
-        '''
-        Args:
-            gpath (str): The gpath direction file into Drive
-            path (str): The `path` of file where will it be download.
-        '''
         if self.listfiles() is not None:
             items = self.listfiles()
             for item in items:
