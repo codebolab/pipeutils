@@ -1,12 +1,9 @@
-import os
 import io
-import six
 import avro.io
 import json
 
-from avro import schema
 from pipeutils import logger
-from pipeutils.avro import Registry, registry
+from pipeutils.avro import registry
 
 
 class Serializer(object):
@@ -18,40 +15,41 @@ class Serializer(object):
 
 
 class AvroSerializer(Serializer):
+    def __init__(self, schema_name, version=1):
+        self.schema = registry.get(name=schema_name, version=version)
 
-    def serialize(self, data, pipeline=None, version=1, **kwargs):
+    def serialize(self, data):
         """
-        Returns the avro encoded version of `data` using the avro schema `pipeline` and its `version`.
+        Returns the avro encoded version of `data` using the avro schema
+        `pipeline` and its `version`.
         """
         raw_bytes = None
-        schema = registry.get(name=pipeline, version=version)
+
         try:
-            writer = avro.io.DatumWriter(schema)
+            writer = avro.io.DatumWriter(self.schema)
             bytes_writer = io.BytesIO()
             encoder = avro.io.BinaryEncoder(bytes_writer)
             writer.write(data, encoder)
             raw_bytes = bytes_writer.getvalue()
-            logger.debug('Read bytes: %s ', len(raw_bytes))
-            logger.debug(type(raw_bytes))
-        except:
-            logger.debug('Error serializer data: %s ', data)
+        except Exception as e:
+            logger.error(f'{e} serializer data: %s ')
 
         return raw_bytes
 
-    def deserialize(self, data, pipeline=None, version=1, **kwargs):
+    def deserialize(self, data):
         """
-        Returns the avro decoded version of `data` using the avro schema `pipeline` and its `version`.
+        Returns the avro decoded version of `data` using the avro schema
+        `pipeline` and its `version`.
         """
+
         bytes_reader = io.BytesIO(data)
         decoder = avro.io.BinaryDecoder(bytes_reader)
-        schema = registry.get(name=pipeline, version=version)
-        reader = avro.io.DatumReader(schema)
+        reader = avro.io.DatumReader(self.schema)
         datum = reader.read(decoder)
-        logger.debug('Data : %s ', datum)
-        return datum 
+        return datum
+
 
 class JSONSerializer(Serializer):
-
     def serialize(self, data, **kwargs):
         """
         Returns the json encoded version of `data`.
@@ -63,4 +61,3 @@ class JSONSerializer(Serializer):
         Returns the json decoded version of `data`.
         """
         return json.loads(data)
-
