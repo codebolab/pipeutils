@@ -17,10 +17,8 @@ class TestClientVertica(unittest.TestCase):
         client = Vertica()
         conn = client.connect()
         client.close()
-        """
-        Check that attempting to reopen a existent connection
-        and check exist schema in database. 
-        """
+
+        # Test reconnect
         conn = client.reconect()
         cursor = conn.cursor()
         cursor.execute("select name from test.example")
